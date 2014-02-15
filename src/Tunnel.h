@@ -10,6 +10,7 @@ class Tunnel {
 		void genTo(int z);
 
 		int get(int z, int x);
+		void set(int z, int x, int s);
 
 	private:
 		std::vector<int*> tunnel;

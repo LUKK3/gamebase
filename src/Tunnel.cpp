@@ -26,9 +26,10 @@ void Tunnel::genTo(int z) {
 		}
 		int* arr2 = tunnel[tunnel.size() - 2];
 		for (int i = 0; i < 4; i++) {
-			arr[i] = 0;
-			if (rand() % 20 == 1) arr[i] = 1;
-			//if (rand() % 20 == 2) arr[i] = 2;
+			arr2[i] = 0;
+			int r = rand() % 50;
+			if (r == 1) arr2[i] = 1;
+			else if (r < 5) arr2[i] = 2;
 		}
 		if (rand() % 10 == 1) {
 			int x = (rand() % 2) * 2;
@@ -41,6 +42,12 @@ void Tunnel::genTo(int z) {
 }
 
 int Tunnel::get(int z, int x) {
+	if (x < 0) return 0;
+	if (x > 3) return 0;
 	genTo(z);
 	return tunnel[z][x];
+}
+
+void Tunnel::set(int z, int x, int s) {
+	tunnel[z][x] = s;
 }
