@@ -3,7 +3,7 @@
 #include "Tunnel.h"
 #include "Renderer.h"
 
-float yourZ = 0;
+Player player;
 float rockZ = -10;
 Tunnel tunnel;
 Renderer renderer;
@@ -15,9 +15,9 @@ sf::Time prevTime;
 
 void events() {
 	while (window.pollEvent(event)) {
-		if (event.type == sf::Event::Closed) {
-			// SFML sent us a close event, so clean up
-			window.close();
+		switch(event.type) {
+			case sf::Event::Closed: window.close(); break;
+			default: break;
 		}
 	}
 }
@@ -27,14 +27,21 @@ void logic() {
 	sf::Time diff = newTime - prevTime;
 	prevTime = newTime;
 	float difff = diff.asMicroseconds() / 1000000.f;
-	yourZ += difff * 5;
+	player.z += difff * 5;
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		player.x -= difff;
+	}
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		player.x += difff;
+	}
 }
 
 void render() {
 	// Clear the window before we start drawing to it
 	window.clear();
 
-	renderer.render(window, tunnel, yourZ);
+	renderer.render(window, tunnel, player);
 
 	// Notify the window that we're ready to render
 	window.display();

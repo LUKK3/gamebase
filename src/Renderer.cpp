@@ -4,7 +4,8 @@
 
 Renderer::Renderer() {
 	// Tileset
-	texture.loadFromFile("assets/tile.png");
+	tileTexture.loadFromFile("assets/tile.png");
+	playerTexture.loadFromFile("assets/player.png");
 	
 	// UI
 	gauge.loadFromFile("assets/gauge.png");
@@ -18,10 +19,12 @@ void Renderer::renderUI(sf::RenderTarget& target) {
 	target.draw(gaugeSprite);
 }
 
-void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, float z) {
+void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, Player& player) {
+
+	float z = player.z;
 
 	sf::RenderStates states;
-	states.texture = &texture;
+	states.texture = &tileTexture;
 	states.transform.translate(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 	states.transform.scale(2.5, 2.5);
 
@@ -54,6 +57,12 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, float z) {
 
 		target.draw(vertexArray, states);
 	}
+
+	static float sz = std::sqrt(0.5);
+	sf::Sprite sprite;
+	sprite.setTexture(playerTexture);
+	sprite.setPosition(player.x * TILE_SIZE / sz, -2 / sz);
+	target.draw(sprite, states.transform);
 }
 
 sf::Vector2f texCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
@@ -61,8 +70,8 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, i
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
-	shape.setTexture(&texture);
-	shape.setTextureRect(sf::IntRect(0, 0, 64, 64));
+	//shape.setTexture(&texture);
+	//shape.setTextureRect(sf::IntRect(0, 0, 64, 64));
 
 	int hw = 0;//WINDOW_WIDTH / 2;
 	int hh = 0;//WINDOW_HEIGHT / 2;
@@ -76,20 +85,13 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, i
 	int c = (int)(sz * 20 + 50);
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
-	//if (color) {
-		vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
-		vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
-		vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
-		vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
-	//}
+	vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
 
 	vertexArray.append(vert1);
 	vertexArray.append(vert2);
 	vertexArray.append(vert3);
 	vertexArray.append(vert4);
-
-
-
-	//shape.setFillColor(sf::Color(c, c, c));
-
 }

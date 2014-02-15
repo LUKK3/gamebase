@@ -29,8 +29,25 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add directory="mydeps/include" />
+			<Add directory="src" />
 		</Compiler>
+		<Linker>
+			<Add library="sfml-system" />
+			<Add library="sfml-window" />
+			<Add library="sfml-graphics" />
+			<Add directory="mydeps/lib" />
+		</Linker>
+		<Unit filename="src/Player.cpp" />
+		<Unit filename="src/Player.h" />
+		<Unit filename="src/Renderer.cpp" />
+		<Unit filename="src/Renderer.h" />
+		<Unit filename="src/Tunnel.cpp" />
+		<Unit filename="src/Tunnel.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/main.h" />
 		<Extensions>
 			<envvars />
 			<code_completion />
