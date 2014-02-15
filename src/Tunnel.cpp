@@ -1,9 +1,8 @@
 #include "Tunnel.h"
-
 #include <cstdlib>
 
-Tunnel::Tunnel() {
-	//ctor
+Tunnel::Tunnel(int length) {
+    this->length = length;
 }
 
 void Tunnel::genTo(int z) {
@@ -21,6 +20,7 @@ void Tunnel::genTo(int z) {
 		for (int i = 0; i < 4; i++) {
 			arr[i] = 0;
 			if (rand() % 20 == 1) arr[i] = 1;
+			//if (rand() % 20 == 2) arr[i] = 2;
 		}
 		if (rand() % 10 == 1) {
 			int x = (rand() % 2) * 2;

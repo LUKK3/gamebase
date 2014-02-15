@@ -20,6 +20,7 @@ class Renderer {
 		sf::Texture tileTexture;
 		sf::Texture playerTexture;
 		sf::Texture gauge, playerInd, boulderInd;
+		sf::Font font;
 
 		Tunnel* tunnel;
 };
