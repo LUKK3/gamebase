@@ -75,7 +75,7 @@ void logic() {
 	}
 	player.yVel -= difff * 15;
 
-	player.z += player.zVel * difff;//difff * 5;
+	player.z += player.zVel * difff * 2;
 	player.y += player.yVel * difff;
 	player.x += player.xVel * difff;
 	if (player.x < -0.85) {
