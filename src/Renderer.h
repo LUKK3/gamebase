@@ -22,6 +22,7 @@ class Renderer {
 		sf::Texture gauge, playerInd, boulderInd;
 		sf::Font font;
 
+		Player* player;
 		Tunnel* tunnel;
 };
 

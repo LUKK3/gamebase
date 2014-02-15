@@ -46,9 +46,9 @@ void Renderer::renderUI(sf::RenderTarget& target) {
 	target.draw(text2);
 }
 
-void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& player) {
+void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 
-	float z = player.z;
+	float z = p.z;
 
 	sf::RenderStates states;
 	states.texture = &tileTexture;
@@ -56,6 +56,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& player) {
 	states.transform.scale(2.5, 2.5);
 
 	tunnel = &t;
+	player = &p;
 
 	for (int i = (int)z + 100; i >= (int)z; i--) {
 
@@ -111,11 +112,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& player) {
 		target.draw(vertexArray, states);
 	}
 
-	static float sz = std::sqrt(0.5);
+	static float sz1 = std::sqrt(1.5);
 	sf::Sprite sprite;
 	sprite.setTexture(playerTexture);
-	sprite.setOrigin(playerTexture.getSize().x / 2, -20);
-	sprite.setPosition(player.x * TILE_SIZE / sz, (0 - player.y) * TILE_SIZE / sz);
+	sprite.setOrigin(playerTexture.getSize().x / 2, 0);
+	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
 	target.draw(sprite, states.transform);
 }
 
@@ -151,6 +152,7 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	int c = (int)(sz * 20 + 50);
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
+	//if (std::floor(player->z + 1) == z && std::floor(player->x + 2) == x) c = 0;
 	vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
 	vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
 	vert3.color = sf::Color(255 - c, 255 - c, 255 - c);

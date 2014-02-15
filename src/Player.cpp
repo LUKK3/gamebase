@@ -7,4 +7,5 @@ Player::Player() {
 	xVel = 0;
 	yVel = 0;
 	zVel = 5;
+	fallen = false;
 }

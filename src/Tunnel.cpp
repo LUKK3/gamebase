@@ -3,6 +3,14 @@
 
 Tunnel::Tunnel(int length) {
     this->length = length;
+
+    tunnel.resize(4);
+    for (int i = 0; i < 4; i++) {
+		tunnel[i] = new int[4];
+		for (int j = 0; j < 4; j++) {
+			tunnel[i][j] = 0;
+		}
+    }
 }
 
 void Tunnel::genTo(int z) {
