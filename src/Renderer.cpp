@@ -203,7 +203,7 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	// ratio = 0: 255 - c
 	// ratio = 1: c
 	// delta: 2c - 255
-	if (std::floor(player->z + 1) == z && std::floor(player->x + 2) == x) c = 0;
+	//if (std::floor(player->z + 1) == z && std::floor(player->x + 2) == x) c = 0;
 	float add = 1.0f - lightRatio; //lightRatio * (2 * c - 255);
 	vert1.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
 	vert2.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);

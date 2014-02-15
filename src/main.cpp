@@ -107,8 +107,6 @@ void logic() {
 		player.y = 0;
 		player.yVel = 0;
 	}
-
-	renderer.particles.update(diff);
 }
 
 void render() {
