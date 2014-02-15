@@ -1,4 +1,5 @@
 #include "Renderer.h"
+#include <sstream>
 
 #define TILE_SIZE 100
 
@@ -18,7 +19,13 @@ Renderer::Renderer() {
     font.loadFromFile("assets/goldbox.ttf");
 }
 
-void Renderer::renderUI(sf::RenderTarget& target) {
+void Renderer::renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player) {
+	float boulderPercent = 0.0f;
+	boulderPercent = boulderPercent > 1.0f ? 1.0f : boulderPercent;
+
+	float playerPercent = player.z / tunnel.getLength();
+	playerPercent = playerPercent > 1.0f ? 1.0f : playerPercent;
+
 	float startX = (WINDOW_WIDTH - gauge.getSize().x) / 2;
 	float endX = startX + gauge.getSize().x;
     float startY = 16.0f;
@@ -28,27 +35,41 @@ void Renderer::renderUI(sf::RenderTarget& target) {
 	target.draw(gaugeSprite);
 
 	sf::Sprite playerIndSprite(playerInd);
-	playerIndSprite.setPosition(startX - playerInd.getSize().x / 2, startY);
+	playerIndSprite.setOrigin(playerInd.getSize().x / 2, 0);
+	playerIndSprite.setPosition(startX + playerPercent * gauge.getSize().x, startY);
 	target.draw(playerIndSprite);
 
 	sf::Sprite boulderIndSprite(boulderInd);
-	boulderIndSprite.setPosition(endX - boulderInd.getSize().x / 2, startY);
+	boulderIndSprite.setOrigin(boulderInd.getSize().x / 2, 0);
+	boulderIndSprite.setPosition(startX + boulderPercent * gauge.getSize().x, startY);
 	target.draw(boulderIndSprite);
 
 	// Render text
-	sf::Text text("104 m", font);
+	std::stringstream ss;
+	ss << (int)player.z << "m";
+	sf::Text text(ss.str(), font);
 	text.setCharacterSize(20);
 	text.setPosition(startX - text.getLocalBounds().width - 24, startY + 5);
 	target.draw(text);
 
-	sf::Text text2("16.4 %", font);
+	std::stringstream ss2;
+	ss2 << (int)(playerPercent * 100) << "%";
+	sf::Text text2(ss2.str(), font);
 	text2.setCharacterSize(20);
 	text2.setPosition(endX + 24, startY + 5);
 	target.draw(text2);
+
+	// If playerPercent > 1.0f, YOU WIN
+	if (playerPercent == 1.0f) {
+		sf::Text winText("YOU WIN!", font);
+		winText.setCharacterSize(80);
+		winText.setColor(sf::Color(255, 0, 0, 255));
+		winText.setPosition(WINDOW_WIDTH / 2 - winText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - winText.getLocalBounds().height / 2);
+		target.draw(winText);
+	}
 }
 
 void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
-
 	float z = p.z;
 
 	sf::RenderStates states;
@@ -58,6 +79,23 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 
 	tunnel = &t;
 	player = &p;
+
+	lightRatio = 0.0f;
+	if (z > tunnel->getLength() - 20 && z < tunnel->getLength()) {
+        lightRatio = (z - tunnel->getLength() + 20) / 20.0f;
+	} else if (z >= tunnel->getLength()) {
+        lightRatio = 1.0f;
+	}
+	if (lightRatio > 1.0f || lightRatio < 0.0f) {
+		printf("%f", lightRatio);
+	}
+
+	sf::RectangleShape lightShape;
+	lightShape.setSize(sf::Vector2f(100, 100));
+	lightShape.setFillColor(sf::Color(lightRatio * 255.0f, lightRatio * 255.0f, lightRatio * 255.0f, 255));
+	lightShape.setOrigin(50, 50);
+	lightShape.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+	target.draw(lightShape);
 
 	for (int i = (int)z + 100; i >= (int)z; i--) {
 
@@ -161,11 +199,16 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	int c = (int)(sz * 20 + 50);
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
+
+	// ratio = 0: 255 - c
+	// ratio = 1: c
+	// delta: 2c - 255
 	if (std::floor(player->z + 1) == z && std::floor(player->x + 2) == x) c = 0;
-	vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
-	vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
-	vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
-	vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
+	float add = 1.0f - lightRatio; //lightRatio * (2 * c - 255);
+	vert1.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
+	vert2.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
+	vert3.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
+	vert4.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
 
 	vertexArray.append(vert1);
 	vertexArray.append(vert2);

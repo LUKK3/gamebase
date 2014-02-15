@@ -12,6 +12,8 @@ class Tunnel {
 		int get(int z, int x);
 		void set(int z, int x, int s);
 
+		int getLength();
+
 	private:
 		std::vector<int*> tunnel;
 		int length;
