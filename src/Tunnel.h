@@ -9,6 +9,8 @@ class Tunnel {
 
 		void genTo(int z);
 
+		int get(int z, int x);
+
 	private:
 		std::vector<int*> tunnel;
 		int length;

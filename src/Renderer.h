@@ -15,13 +15,14 @@ class Renderer {
 		void renderUI(sf::RenderTarget& target);
 
 	private:
-		void drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, int y1, int y2, bool color);
+		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x = 0, int z = 0);
 
 		sf::Texture tileTexture;
 		sf::Texture playerTexture;
-
 		sf::Texture gauge, playerInd, boulderInd;
 		sf::Font font;
+
+		Tunnel* tunnel;
 };
 
 #endif // RENDERER_H

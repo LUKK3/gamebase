@@ -4,7 +4,8 @@
 
 class Player {
 	public:
-		float x, y, z, jump;
+		float x, y, z;
+		float xVel, yVel, zVel;
 
 		Player();
 
