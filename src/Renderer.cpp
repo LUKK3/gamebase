@@ -5,18 +5,43 @@
 Renderer::Renderer() {
 	// Tileset
 	tileTexture.loadFromFile("assets/tile.png");
+	tileTexture.setSmooth(true);
 	playerTexture.loadFromFile("assets/player.png");
-	
+
 	// UI
 	gauge.loadFromFile("assets/gauge.png");
 	playerInd.loadFromFile("assets/guy_marker.png");
 	boulderInd.loadFromFile("assets/boulder_marker.png");
+    font.loadFromFile("assets/goldbox.ttf");
 }
 
 void Renderer::renderUI(sf::RenderTarget& target) {
+	float startX = (WINDOW_WIDTH - gauge.getSize().x) / 2;
+	float endX = startX + gauge.getSize().x;
+    float startY = 16.0f;
+
 	sf::Sprite gaugeSprite(gauge);
-	gaugeSprite.setPosition();
+	gaugeSprite.setPosition(startX, startY);
 	target.draw(gaugeSprite);
+
+	sf::Sprite playerIndSprite(playerInd);
+	playerIndSprite.setPosition(startX - playerInd.getSize().x / 2, startY);
+	target.draw(playerIndSprite);
+
+	sf::Sprite boulderIndSprite(boulderInd);
+	boulderIndSprite.setPosition(endX - boulderInd.getSize().x / 2, startY);
+	target.draw(boulderIndSprite);
+
+	// Render text
+	sf::Text text("104 m", font);
+	text.setCharacterSize(20);
+	text.setPosition(startX - text.getLocalBounds().width - 24, startY + 5);
+	target.draw(text);
+
+	sf::Text text2("16.4 %", font);
+	text2.setCharacterSize(20);
+	text2.setPosition(endX + 24, startY + 5);
+	target.draw(text2);
 }
 
 void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, Player& player) {

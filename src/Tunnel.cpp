@@ -1,7 +1,7 @@
 #include "Tunnel.h"
 
-Tunnel::Tunnel() {
-	//ctor
+Tunnel::Tunnel(int length) {
+    this->length = length;
 }
 
 void Tunnel::genTo(int z) {

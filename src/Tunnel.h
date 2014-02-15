@@ -5,12 +5,13 @@
 
 class Tunnel {
 	public:
-		Tunnel();
+		Tunnel(int length = 100);
 
 		void genTo(int z);
 
 	private:
 		std::vector<int*> tunnel;
+		int length;
 };
 
 #endif // TUNNEL_H

@@ -42,6 +42,7 @@ void render() {
 	window.clear();
 
 	renderer.render(window, tunnel, player);
+	renderer.renderUI(window);
 
 	// Notify the window that we're ready to render
 	window.display();
