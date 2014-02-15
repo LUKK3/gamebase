@@ -7,7 +7,7 @@ Renderer::Renderer() {
 	playerTexture.loadFromFile("assets/player.png");
 }
 
-void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, Player& player) {
+void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& player) {
 
 	float z = player.z;
 
@@ -16,32 +16,36 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, Player& player) 
 	states.transform.translate(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 	states.transform.scale(2.5, 2.5);
 
-	for (int i = (int)z; i < (int)z + 100; i++) {
+	tunnel = &t;
 
-		bool color = false;
-		if (i - z > 20) {
-			//states.texture = NULL;
-			color = true;
-		}
+	for (int i = (int)z + 100; i >= (int)z; i--) {
 
 		sf::VertexArray vertexArray(sf::Quads, 4 * 16);
 
-		drawTile(vertexArray, i - z, -2, -1,  2,  2, color);
-		drawTile(vertexArray, i - z, -1,  0,  2,  2, color);
-		drawTile(vertexArray, i - z,  0,  1,  2,  2, color);
-		drawTile(vertexArray, i - z,  1,  2,  2,  2, color);
-		drawTile(vertexArray, i - z, -2, -1, -2, -2, color);
-		drawTile(vertexArray, i - z, -1,  0, -2, -2, color);
-		drawTile(vertexArray, i - z,  0,  1, -2, -2, color);
-		drawTile(vertexArray, i - z,  1,  2, -2, -2, color);
-		drawTile(vertexArray, i - z,  2,  2, -2, -1, color);
-		drawTile(vertexArray, i - z,  2,  2, -1,  0, color);
-		drawTile(vertexArray, i - z,  2,  2,  0,  1, color);
-		drawTile(vertexArray, i - z,  2,  2,  1,  2, color);
-		drawTile(vertexArray, i - z, -2, -2, -2, -1, color);
-		drawTile(vertexArray, i - z, -2, -2, -1,  0, color);
-		drawTile(vertexArray, i - z, -2, -2,  0,  1, color);
-		drawTile(vertexArray, i - z, -2, -2,  1,  2, color);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -1,  2,  2, 0, i);
+		drawTile(vertexArray, i - z, i - z + 1,  1,  2,  2,  2, 3, i);
+		drawTile(vertexArray, i - z, i - z + 1, -1,  0,  2,  2, 1, i);
+		drawTile(vertexArray, i - z, i - z + 1,  0,  1,  2,  2, 2, i);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -1, -2, -2);
+		drawTile(vertexArray, i - z, i - z + 1, -1,  0, -2, -2);
+		drawTile(vertexArray, i - z, i - z + 1,  0,  1, -2, -2);
+		drawTile(vertexArray, i - z, i - z + 1,  1,  2, -2, -2);
+		drawTile(vertexArray, i - z, i - z + 1,  2,  2, -2, -1);
+		drawTile(vertexArray, i - z, i - z + 1,  2,  2, -1,  0);
+		drawTile(vertexArray, i - z, i - z + 1,  2,  2,  0,  1);
+		drawTile(vertexArray, i - z, i - z + 1,  2,  2,  1,  2);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -2, -2, -1);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -2, -1,  0);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -2,  0,  1);
+		drawTile(vertexArray, i - z, i - z + 1, -2, -2,  1,  2);
+
+		if (i - z < 20) {
+			for (int j = 0; j < 4; j++) {
+				if (t.get(i, j) == 1 && t.get(i, j) != 1) {
+
+				}
+			}
+		}
 
 		target.draw(vertexArray, states);
 	}
@@ -49,12 +53,14 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, Player& player) 
 	static float sz = std::sqrt(0.5);
 	sf::Sprite sprite;
 	sprite.setTexture(playerTexture);
-	sprite.setPosition(player.x * TILE_SIZE / sz, -2 / sz);
+	sprite.setOrigin(playerTexture.getSize().x / 2, -20);
+	sprite.setPosition(player.x * TILE_SIZE / sz, (0 - player.y) * TILE_SIZE / sz);
 	target.draw(sprite, states.transform);
 }
 
-sf::Vector2f texCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
-void Renderer::drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, int y1, int y2, bool color) {
+sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
+sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
+void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x, int z) {
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
@@ -63,8 +69,24 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, i
 
 	int hw = 0;//WINDOW_WIDTH / 2;
 	int hh = 0;//WINDOW_HEIGHT / 2;
-	float sz = std::sqrt(z + 1.5);
-	float sz2 = std::sqrt(z + 2.5);
+	float sz = std::sqrt(z1 + 1.5);
+	float sz2 = std::sqrt(z2 + 1.5);
+
+	sf::Vector2f* texCoords;
+	if (tunnel->get(z, x) == 1) {
+		y1 += .2f;
+		y2 += .2f;
+		texCoords = lavaTexCoords;
+
+		if (x == 0 || (x == 1 && tunnel->get(z, 0) == 0)) {
+			drawTile(vertexArray, z1, z2, x1, x1, 2, 3);
+		}
+		if (x == 3 || (x == 2 && tunnel->get(z, 3) == 0)) {
+			drawTile(vertexArray, z1, z2, x2, x2, 2, 3);
+		}
+	} else {
+		texCoords = stoneTexCoords;
+	}
 
 	sf::Vertex vert1(sf::Vector2f(hw + (x1 * TILE_SIZE) / sz,  hh / 2 + (y1 * TILE_SIZE) / sz),  texCoords[0]);
 	sf::Vertex vert2(sf::Vector2f(hw + (x2 * TILE_SIZE) / sz,  hh / 2 + (y2 * TILE_SIZE) / sz + 0.01),  texCoords[1]);
