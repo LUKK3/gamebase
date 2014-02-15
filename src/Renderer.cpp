@@ -3,7 +3,19 @@
 #define TILE_SIZE 100
 
 Renderer::Renderer() {
+	// Tileset
 	texture.loadFromFile("assets/tile.png");
+	
+	// UI
+	gauge.loadFromFile("assets/gauge.png");
+	playerInd.loadFromFile("assets/guy_marker.png");
+	boulderInd.loadFromFile("assets/boulder_marker.png");
+}
+
+void Renderer::renderUI(sf::RenderTarget& target) {
+	sf::Sprite gaugeSprite(gauge);
+	gaugeSprite.setPosition();
+	target.draw(gaugeSprite);
 }
 
 void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, float z) {
