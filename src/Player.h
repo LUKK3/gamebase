@@ -6,6 +6,7 @@ class Player {
 	public:
 		float x, y, z;
 		float xVel, yVel, zVel;
+		bool fallen;
 
 		Player();
 

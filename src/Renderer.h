@@ -15,7 +15,7 @@ class Renderer {
 		void renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player);
 
 	private:
-		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x = 0, int z = 0);
+		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x = -1, int z = 0);
 
 		sf::Texture tileTexture;
 		sf::Texture playerTexture;
@@ -23,7 +23,7 @@ class Renderer {
 		sf::Font font;
 
 		float lightRatio;
-
+		Player* player;
 		Tunnel* tunnel;
 };
 
