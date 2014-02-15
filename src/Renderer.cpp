@@ -3,34 +3,81 @@
 #define TILE_SIZE 100
 
 Renderer::Renderer() {
-	//ctor
+	texture.loadFromFile("assets/tile.png");
 }
 
 void Renderer::render(sf::RenderTarget& target, Tunnel& tunnel, float z) {
 
-	for (int i = (int)z; i < (int)z + 10; i++) {
+	sf::RenderStates states;
+	states.texture = &texture;
+	states.transform.translate(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+	states.transform.scale(2.5, 2.5);
 
-		drawTile(target, i - z, 0);
+	for (int i = (int)z; i < (int)z + 100; i++) {
 
+		bool color = false;
+		if (i - z > 20) {
+			//states.texture = NULL;
+			color = true;
+		}
+
+		sf::VertexArray vertexArray(sf::Quads, 4 * 16);
+
+		drawTile(vertexArray, i - z, -2, -1,  2,  2, color);
+		drawTile(vertexArray, i - z, -1,  0,  2,  2, color);
+		drawTile(vertexArray, i - z,  0,  1,  2,  2, color);
+		drawTile(vertexArray, i - z,  1,  2,  2,  2, color);
+		drawTile(vertexArray, i - z, -2, -1, -2, -2, color);
+		drawTile(vertexArray, i - z, -1,  0, -2, -2, color);
+		drawTile(vertexArray, i - z,  0,  1, -2, -2, color);
+		drawTile(vertexArray, i - z,  1,  2, -2, -2, color);
+		drawTile(vertexArray, i - z,  2,  2, -2, -1, color);
+		drawTile(vertexArray, i - z,  2,  2, -1,  0, color);
+		drawTile(vertexArray, i - z,  2,  2,  0,  1, color);
+		drawTile(vertexArray, i - z,  2,  2,  1,  2, color);
+		drawTile(vertexArray, i - z, -2, -2, -2, -1, color);
+		drawTile(vertexArray, i - z, -2, -2, -1,  0, color);
+		drawTile(vertexArray, i - z, -2, -2,  0,  1, color);
+		drawTile(vertexArray, i - z, -2, -2,  1,  2, color);
+
+		target.draw(vertexArray, states);
 	}
 }
 
-void Renderer::drawTile(sf::RenderTarget& target, float z, int x) {
+sf::Vector2f texCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
+void Renderer::drawTile(sf::VertexArray& vertexArray, float z, int x1, int x2, int y1, int y2, bool color) {
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
+	shape.setTexture(&texture);
+	shape.setTextureRect(sf::IntRect(0, 0, 64, 64));
 
-	float sz = std::sqrt(z);
-	shape.setPoint(0, sf::Vector2f(WINDOW_WIDTH / 2 + ((2 - x) * TILE_SIZE) / sz, WINDOW_HEIGHT / 2 + (2 * TILE_SIZE) / sz));
-	shape.setPoint(1, sf::Vector2f(WINDOW_WIDTH / 2 + ((1 - x) * TILE_SIZE) / sz, WINDOW_HEIGHT / 2 + (2 * TILE_SIZE) / sz));
-	float sz2 = std::sqrt(z + 1);
-	shape.setPoint(2, sf::Vector2f(WINDOW_WIDTH / 2 + ((1 - x) * TILE_SIZE) / sz2, WINDOW_HEIGHT / 2 + (2 * TILE_SIZE) / sz2));
-	shape.setPoint(3, sf::Vector2f(WINDOW_WIDTH / 2 + ((2 - x) * TILE_SIZE) / sz2, WINDOW_HEIGHT / 2 + (2 * TILE_SIZE) / sz2));
+	int hw = 0;//WINDOW_WIDTH / 2;
+	int hh = 0;//WINDOW_HEIGHT / 2;
+	float sz = std::sqrt(z + 1.5);
+	float sz2 = std::sqrt(z + 2.5);
 
-	int c = z * 100;
+	sf::Vertex vert1(sf::Vector2f(hw + (x1 * TILE_SIZE) / sz,  hh / 2 + (y1 * TILE_SIZE) / sz),  texCoords[0]);
+	sf::Vertex vert2(sf::Vector2f(hw + (x2 * TILE_SIZE) / sz,  hh / 2 + (y2 * TILE_SIZE) / sz + 0.01),  texCoords[1]);
+	sf::Vertex vert3(sf::Vector2f(hw + (x2 * TILE_SIZE) / sz2, hh / 2 + (y2 * TILE_SIZE) / sz2 + 0.01), texCoords[2]);
+	sf::Vertex vert4(sf::Vector2f(hw + (x1 * TILE_SIZE) / sz2, hh / 2 + (y1 * TILE_SIZE) / sz2), texCoords[3]);
+	int c = (int)(sz * 20 + 50);
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
-	shape.setFillColor(sf::Color(c, c, c));
+	//if (color) {
+		vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
+		vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
+		vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
+		vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
+	//}
 
-	target.draw(shape);
+	vertexArray.append(vert1);
+	vertexArray.append(vert2);
+	vertexArray.append(vert3);
+	vertexArray.append(vert4);
+
+
+
+	//shape.setFillColor(sf::Color(c, c, c));
+
 }

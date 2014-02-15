@@ -283,15 +283,15 @@ def build(ctx):
         frameworks.extend(['OpenAL', 'OpenGL', 'freetype', 'sndfile', 'IOKit', 'Carbon', 'AppKit', 'Foundation'])
 
     targets = [
-        ('game', ctx.path.ant_glob('src/**/*.cpp')),
-        ('example_game', 'example/main.cpp')
+        ('game', ctx.path.ant_glob('src/**/*.cpp'))
+       # ('example_game', 'example/main.cpp')
     ]
 
     for target in targets:
         ctx.program(
             source        = target[1],
             target        = target[0],
-            use           = ['box2d', 'jsoncpp', 'pugixml', 'sfgui', 'sfml', 'freetype', 'glew'],
+            use           = ['sfml', 'freetype', 'glew'],
             uselib        = uselibs,
 
             defines       = defines,

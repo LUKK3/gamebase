@@ -27,7 +27,7 @@ void logic() {
 	sf::Time diff = newTime - prevTime;
 	prevTime = newTime;
 	float difff = diff.asMicroseconds() / 1000000.f;
-	yourZ += difff;
+	yourZ += difff * 5;
 }
 
 void render() {
