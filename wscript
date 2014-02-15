@@ -237,7 +237,7 @@ def build(ctx):
         sfml_includes.extend(['extlibs/headers/AL', 'extlibs/headers', 'extlibs/headers/libsndfile/osx', 'extlibs/headers/jpeg', 'extlibs/headers/libfreetype/osx'])
 
     sfml_includes = [sfml_node.abspath() + '/' + include for include in sfml_includes]
-    sfml_includes = [freetype_include_node, glew_include_node] + sfml_includes
+    sfml_includes = [freetype_include_node, glew_include_node, '/usr/include/AL'] + sfml_includes
     ctx.stlib(
         source       = sfml_source,
         target       = 'sfml',

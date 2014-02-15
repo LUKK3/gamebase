@@ -1,0 +1,33 @@
+Gofast.cbp
+wscript*
+wscript
+
+# Code::Blocks
+*.layout
+*.depend
+bin/*
+
+# Object files
+*.o
+
+# Libraries
+*.lib
+*.a
+
+# Shared objects (inc. Windows DLLs)
+*.dll
+*.so
+*.so.*
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+mydeps/lib/*
+
+deps/*
+.waf*
+.lock*
+build/*
