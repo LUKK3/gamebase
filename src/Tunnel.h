@@ -11,6 +11,8 @@ class Tunnel {
 
 		int get(int z, int x);
 
+		int getLength();
+
 	private:
 		std::vector<int*> tunnel;
 		int length;

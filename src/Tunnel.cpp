@@ -5,6 +5,10 @@ Tunnel::Tunnel(int length) {
     this->length = length;
 }
 
+int Tunnel::getLength() {
+	return length;
+}
+
 void Tunnel::genTo(int z) {
 	while((int)tunnel.size() < z + 1) {
 		tunnel.emplace_back();
@@ -19,6 +23,9 @@ void Tunnel::genTo(int z) {
 }
 
 int Tunnel::get(int z, int x) {
+	if(z > length){
+		return 0;
+	}
 	genTo(z);
 	return tunnel[z][x];
 }

@@ -94,7 +94,7 @@ void render() {
 	window.clear();
 
 	renderer.render(window, tunnel, player);
-	renderer.renderUI(window);
+	renderer.renderUI(window, tunnel, player);
 
 	// Notify the window that we're ready to render
 	window.display();
