@@ -20,7 +20,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound;
 
 void events() {
 	while (window.pollEvent(event)) {
@@ -75,6 +75,7 @@ void logic() {
 				player.zVel = 3.5f;
 			else if (rok == 4)
 				player.zVel = 0.0f;
+			bumpSound.play();
 			tunnel.set(z1, x1, 0);
 			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
 		}
@@ -212,6 +213,10 @@ int main(int argc, char ** argv) {
 	feetSound.setBuffer(sb5);
 	feetSound.setLoop(true);
 	feetSound.play();
+
+	sf::SoundBuffer sb6;
+	sb6.loadFromFile("assets/bump.ogg");
+	bumpSound.setBuffer(sb6);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");

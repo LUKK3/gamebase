@@ -197,13 +197,6 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
         lightRatio = 1.0f;
 	}
 
-	sf::RectangleShape lightShape;
-	lightShape.setSize(sf::Vector2f(100, 100));
-	lightShape.setFillColor(sf::Color(lightRatio * 255.0f, lightRatio * 255.0f, lightRatio * 255.0f, 255));
-	lightShape.setOrigin(50, 50);
-	lightShape.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-	target.draw(lightShape);
-
 	sf::VertexArray vertexArray(sf::Quads, 4 * 16);
 
 	for (int i = (int)z + 100; i >= (int)z; i--) {
@@ -368,11 +361,10 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
 
-	float add = 1.0f - lightRatio;
-	vert1.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
-	vert2.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
-	vert3.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
-	vert4.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
+	vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
 
 	vertexArray.append(vert1);
 	vertexArray.append(vert2);
