@@ -180,7 +180,7 @@ void logic() {
 	}
 
 	rockZ += difff * rockVel;
-	rockVel += difff / 3;
+	rockVel += difff / 4;
 
 	renderer.update(difff);
 

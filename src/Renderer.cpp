@@ -98,6 +98,7 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 	sf::Text text0(ss0.str(), font);
 	text0.setCharacterSize(30);
 	text0.setPosition(startX - 24, startY + 30);
+	if (player.score >= 5) text0.setColor(sf::Color::Yellow);
 	target.draw(text0);
 
 	if (player.fallen) {
@@ -275,10 +276,12 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 	sf::Sprite sprite;
 
 	int frame = 0 + (int)z % 3;
+	if (p.y > 0.01) frame = 1 + ((int)z / 10) % 2;
 	sprite.setTextureRect(sf::IntRect(sf::Vector2i(frame * 64, 0), sf::Vector2i(64, 128)));
 	sprite.setTexture(playerTexture);
 	sprite.setOrigin(32, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
+	sprite.setColor(sf::Color(255, 255, 255, 127));
 	target.draw(sprite, states.transform);
 
 	if (rockZ > z - 0.5) {
@@ -371,9 +374,9 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float 
 		y2 += .2f;
 		texCoords = lavaTexCoords;
 
-		if (x == 0 || (x == 1 && (tunnel->get(z, 0) == 0 || tunnel->get(z, 0) == 5))) {
+		if (x == 0 || (x == 1 && (tunnel->get(z, 0) != 1 && tunnel->get(z, 0) != 5))) {
 			drawTile(vertexArray, z1, z2, x1, x1, 2, 3);
-		} else if (x == 3 || (x == 2 && (tunnel->get(z, 3) == 0 || tunnel->get(z, 3) == 5))) {
+		} else if (x == 3 || (x == 2 && (tunnel->get(z, 3) != 1 && tunnel->get(z, 3) != 5))) {
 			drawTile(vertexArray, z1, z2, x2, x2, 2, 3);
 		}
 	} else if (tunnel->get(z, x) == 5) {
