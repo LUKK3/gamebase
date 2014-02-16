@@ -10,6 +10,7 @@ const sf::Vector2f darkStoneTexCoords[4] = {sf::Vector2f(0, 64), sf::Vector2f(0,
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
 const sf::Vector2f rockTexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
 const sf::Vector2f webTexCoords[4]   = {sf::Vector2f(64, 64), sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 64)};
+const sf::Vector2f brickTexCoords[4]  = {sf::Vector2f(128, 64), sf::Vector2f(192, 64), sf::Vector2f(192, 128), sf::Vector2f(128, 128)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -134,6 +135,9 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 			pos.y > rect.top && pos.y < rect.top + rect.height) {
 			diedText5.setColor(sf::Color(0, 255, 0, 255));
 			diedText5.setString("YES");
+			if (mouse.isButtonPressed(sf::Mouse::Left)) {
+                return true;
+			}
 		} else {
 			diedText5.setColor(sf::Color(0, 255, 255, 255));
 		}
@@ -198,10 +202,17 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 	lightShape.setPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
 	target.draw(lightShape);
 
-	for (int i = (int)z + 100; i >= (int)z; i--) {
+	sf::VertexArray vertexArray(sf::Quads, 4 * 16);
 
-		sf::VertexArray vertexArray(sf::Quads, 4 * 16);
+	for (int i = (int)z + 100; i >= (int)z; i--) {
 		float z0 = i - z;
+		if (i == tunnel->getLength()) {
+			for (int jj = -2; jj < 2; jj++) {
+				for (int kk = -2; kk < 2; kk++) {
+					drawTileFlat(vertexArray, z0, jj, jj + 1, kk, kk + 1, brickTexCoords);
+				}
+			}
+		}
 
 		if (z0 < 60) {
 			for (int j = 0; j < 4; j++) {

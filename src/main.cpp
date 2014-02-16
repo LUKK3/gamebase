@@ -124,7 +124,11 @@ void logic() {
 	}
 	player.yVel -= difff * 15;
 
-	player.z += player.zVel * difff * 2;
+	if (player.z > tunnel.getLength() - 2) {
+
+	} else {
+		player.z += player.zVel * difff * 2;
+	}
 	player.y += player.yVel * difff;
 	player.x += player.xVel * difff;
 	if (player.x < -1.9) {
