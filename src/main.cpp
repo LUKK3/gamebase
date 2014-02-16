@@ -17,7 +17,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound;
 
 void events() {
 	while (window.pollEvent(event)) {
@@ -40,6 +40,7 @@ void logic() {
 	int x2 = std::floor(player.x + 1.9);
 
 	if (player.fallen) {
+		feetSound.stop();
 		player.zVel -= difff * 10;
 		if (player.zVel < 0) player.zVel = 0;
 
@@ -112,6 +113,7 @@ void logic() {
 		if (!player.fallen && player.y == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			player.yVel = 4;
 			jumpingSound.play();
+			feetSound.pause();
 		}
 	}
 	player.yVel -= difff * 15;
@@ -130,6 +132,9 @@ void logic() {
 	if (!player.fallen && player.y < 0) {
 		player.y = 0;
 		player.yVel = 0;
+		if (feetSound.getStatus() == sf::Sound::Status::Paused) {
+			feetSound.play();
+		}
 	}
 
 	rockZ += difff * rockVel;
@@ -164,6 +169,12 @@ int main(int argc, char ** argv) {
 	sf::SoundBuffer sb3;
 	sb3.loadFromFile("assets/jump.wav");
 	jumpingSound.setBuffer(sb3);
+
+	sf::SoundBuffer sb4;
+	sb4.loadFromFile("assets/footsteps.ogg");
+	feetSound.setBuffer(sb4);
+	feetSound.setLoop(true);
+	feetSound.play();
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
