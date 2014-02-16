@@ -19,7 +19,7 @@ Renderer::Renderer() {
     font.loadFromFile("assets/goldbox.ttf");
 }
 
-void Renderer::renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player) {
+void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player) {
 	float boulderPercent = 0.0f;
 	boulderPercent = boulderPercent > 1.0f ? 1.0f : boulderPercent;
 
@@ -58,6 +58,63 @@ void Renderer::renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player
 	text2.setCharacterSize(20);
 	text2.setPosition(endX + 24, startY + 5);
 	target.draw(text2);
+
+	if (player.fallen) {
+		// YOU DIED
+		sf::Text diedText("You died!", font);
+		diedText.setCharacterSize(80);
+		diedText.setColor(sf::Color(255, 0, 0, 255));
+		diedText.setPosition(WINDOW_WIDTH / 2 - diedText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText.getLocalBounds().height / 2 - 100);
+		target.draw(diedText);
+
+		// TRY AGAIN
+		sf::Text diedText2("Try again?", font);
+		diedText2.setCharacterSize(48);
+		diedText2.setColor(sf::Color(255, 0, 0, 255));
+		diedText2.setPosition(WINDOW_WIDTH / 2 - diedText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText2.getLocalBounds().height / 2 - 20);
+		target.draw(diedText2);
+
+		sf::Mouse mouse;
+		sf::Vector2i pos = mouse.getPosition(target);
+
+		// YES button
+		sf::Text diedText3("YES", font);
+		diedText3.setCharacterSize(48);
+		diedText3.setPosition(WINDOW_WIDTH / 2 - diedText3.getLocalBounds().width / 2 - 85, WINDOW_HEIGHT / 2 - diedText3.getLocalBounds().height / 2 + 30);
+
+		sf::FloatRect rect = diedText3.getGlobalBounds();
+		if (pos.x > rect.left && pos.x < rect.left + rect.width &&
+			pos.y > rect.top && pos.y < rect.top + rect.height) {
+			diedText3.setColor(sf::Color(0, 255, 0, 255));
+		} else {
+			diedText3.setColor(sf::Color(0, 255, 255, 255));
+		}
+		target.draw(diedText3);
+
+		// separator
+		sf::Text diedText4("/", font);
+		diedText4.setCharacterSize(48);
+		diedText4.setPosition(WINDOW_WIDTH / 2 - diedText4.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText4.getLocalBounds().height / 2 + 30);
+		diedText4.setColor(sf::Color(255, 0, 0, 255));
+		target.draw(diedText4);
+
+		// NO button
+		sf::Text diedText5("NO", font);
+		diedText5.setCharacterSize(48);
+		diedText5.setPosition(WINDOW_WIDTH / 2 - diedText5.getLocalBounds().width / 2 + 65, WINDOW_HEIGHT / 2 - diedText5.getLocalBounds().height / 2 + 30);
+
+		rect = diedText5.getGlobalBounds();
+		if (pos.x > rect.left && pos.x < rect.left + rect.width &&
+			pos.y > rect.top && pos.y < rect.top + rect.height) {
+			diedText5.setColor(sf::Color(0, 255, 0, 255));
+			if (mouse.isButtonPressed(sf::Mouse::Left)) {
+                printf("RESTART\n");
+			}
+		} else {
+			diedText5.setColor(sf::Color(0, 255, 255, 255));
+		}
+		target.draw(diedText5);
+	}
 
 	if (player.z < 20) {
 		float alpha = 1.0f;

@@ -13,7 +13,7 @@ class Renderer {
 		Renderer();
 
 		void render(sf::RenderTarget& target, Tunnel& tunnel, Player& player);
-		void renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player);
+		void renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player);
 
 	private:
 		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x = -1, int z = 0);
