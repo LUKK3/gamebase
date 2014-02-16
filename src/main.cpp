@@ -55,6 +55,7 @@ void logic() {
 	player.slowTime -= difff;
 	if (player.slowTime > 1) difff /= player.slowTime;
 	player.feather -= difff;
+	float difff2 = (difff + diff.asMicroseconds() / 1000000.f) / 2;
 
 	int z1 = std::floor(player.z + 1.3);
 	int z2 = std::floor(player.z + 0.9);
@@ -72,7 +73,7 @@ void logic() {
 	}
 
 	if (player.fallen) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
 			resetGame();
 		}
 		feetSound.stop();
@@ -210,7 +211,7 @@ void logic() {
 		player.z += player.zVel * difff * 2;
 	}
 	player.y += player.yVel * difff;
-	player.x += player.xVel * difff * 2;
+	player.x += player.xVel * difff2 * 2;
 	if (player.x < -1.9) {
 		player.x = -1.9;
 		player.xVel = 0;
