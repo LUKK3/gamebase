@@ -6,6 +6,9 @@
 #define TILE_SIZE 100
 
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
+const sf::Vector2f dungeonTexCoords[4] = {sf::Vector2f(0, 192), sf::Vector2f(64, 192), sf::Vector2f(64, 256), sf::Vector2f(0, 256)};
+const sf::Vector2f blueTexCoords[4] = {sf::Vector2f(64, 192), sf::Vector2f(128, 192), sf::Vector2f(128, 256), sf::Vector2f(64, 256)};
+const sf::Vector2f cumonTexCoords[4] = {sf::Vector2f(192, 192), sf::Vector2f(256, 192), sf::Vector2f(256, 256), sf::Vector2f(192, 256)};
 const sf::Vector2f darkStoneTexCoords[4] = {sf::Vector2f(0, 64), sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 64)};
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
 const sf::Vector2f rock1TexCoords[4]  = {sf::Vector2f(192, 0), sf::Vector2f(256, 0), sf::Vector2f(256, 64), sf::Vector2f(192, 64)};
@@ -373,7 +376,19 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float 
 			drawTile(vertexArray, z1, z2, x2, x2, 2, 3);
 		}
 	} else {
-		texCoords = stoneTexCoords;
+		if (tunnel->getDifficulty() == 1) {
+			texCoords = dungeonTexCoords;
+		} else if (tunnel->getDifficulty() == 2) {
+			texCoords = blueTexCoords;
+		} else if (tunnel->getDifficulty() == 3) {
+			texCoords = darkStoneTexCoords;
+		} else if (tunnel->getDifficulty() == 4) {
+			texCoords = cumonTexCoords;
+		} else if (tunnel->getDifficulty() == 5) {
+			texCoords = brickTexCoords;
+		} else {
+			texCoords = stoneTexCoords;
+		}
 	}
 
 	sf::Vertex vert1(sf::Vector2f((x1 * TILE_SIZE) / sz,  (y1 * TILE_SIZE) / sz),  texCoords[0]);

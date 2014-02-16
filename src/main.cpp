@@ -193,8 +193,9 @@ void render() {
 
 	renderer.render(window, tunnel, player, rockZ);
 	if (renderer.renderUI(window, tunnel, player, rockZ)) {
-		if (player.z > tunnel.getLength() - 1 && player.score >= 5) difficulty++;
-		tunnel.reset(difficulty);
+		std::cout << player.z << " " << tunnel.getLength() - 1 << std::endl;
+		if (player.z > tunnel.getLength() - 2 && player.score >= 5) difficulty++;
+		tunnel.reset((difficulty + 2) * 100, difficulty);
 		player.reset();
 		renderer.reset();
 		rockZ = ROCK_START_Z;
