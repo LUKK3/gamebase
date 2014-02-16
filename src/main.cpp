@@ -68,7 +68,13 @@ void logic() {
 		renderer.addParticles(10, sf::Color(255, 127, 0), sf::Vector3f(player.x, 3, player.z));
 	} else {
 		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
-			player.zVel = 1.5;
+			int rok = tunnel.get(z1, x1);
+			if (rok == 2)
+				player.zVel = 1.5;
+			else if (rok == 3)
+				player.zVel = 3.5f;
+			else if (rok == 4)
+				player.zVel = 0.0f;
 			tunnel.set(z1, x1, 0);
 			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
 		}
