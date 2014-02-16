@@ -275,7 +275,7 @@ def build(ctx):
         libs.extend(['dl', 'GL', 'jpeg', 'pthread'])
     if ctx.env['DEST_OS'] == 'win32':
         stlibpath.append(sfml_node.abspath() + '/extlibs/libs-mingw/x86/')
-        libs.extend(['opengl32', 'Gdi32', 'Winmm', 'jpeg', 'sndfile'])
+        libs.extend(['opengl32', 'Gdi32', 'Winmm', 'jpeg', 'sndfile', 'openal32'])
     if ctx.env['DEST_OS'] == 'darwin':
         stlibpath.append(sfml_node.abspath() + '/extlibs/libs-osx/lib')
         libs.extend(['jpeg'])
