@@ -12,4 +12,5 @@ void Player::reset() {
 	yVel = 0;
 	zVel = 5;
 	fallen = false;
+	score = 0;
 }

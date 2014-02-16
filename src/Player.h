@@ -7,6 +7,7 @@ class Player {
 		float x, y, z;
 		float xVel, yVel, zVel;
 		bool fallen;
+		int score;
 
 		Player();
 

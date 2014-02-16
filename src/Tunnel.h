@@ -5,7 +5,7 @@
 
 class Tunnel {
 	public:
-		Tunnel(int length = 300);
+		Tunnel(int length = 300, int difficulty = 0);
 
 		void genTo(int z);
 
@@ -19,7 +19,7 @@ class Tunnel {
 		bool hasBrickWall();
 		void breakWall();
 
-		void reset();
+		void reset(int difficulty);
 
 	private:
 		int* insertRow();
@@ -27,6 +27,7 @@ class Tunnel {
 		std::vector<int*> tunnel;
 		int length;
 		bool brickWall;
+		int difficulty;
 };
 
 #endif // TUNNEL_H

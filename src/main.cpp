@@ -15,6 +15,8 @@ float rockVel = ROCK_START_VEL;
 Tunnel tunnel;
 Renderer renderer;
 
+int difficulty = 0;
+
 sf::RenderWindow window;
 sf::Event event;
 sf::Clock mainClock;
@@ -37,7 +39,7 @@ void logic() {
 	prevTime = newTime;
 	float difff = diff.asMicroseconds() / 1000000.f;
 
-	int z1 = std::floor(player.z + 1.1);
+	int z1 = std::floor(player.z + 1.3);
 	int z2 = std::floor(player.z + 0.9);
 	int x1 = std::floor(player.x + 2.1);
 	int x2 = std::floor(player.x + 1.9);
@@ -88,7 +90,10 @@ void logic() {
 			bumpSound.play();
 			tunnel.set(z1, x1, 0);
 			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
+		} else if (!player.fallen && player.y > 0.5 && (tunnel.get(z1, x1 + 5) > 1 && tunnel.get(z2, x1 + 5) > 1 && tunnel.get(z1, x2 + 5) > 1 && tunnel.get(z2, x2 + 5) > 1)) {
+			tunnel.set(z1, x1 + 5, 0);
 		}
+
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			player.xVel -= difff * 4;
@@ -179,7 +184,8 @@ void render() {
 
 	renderer.render(window, tunnel, player, rockZ);
 	if (renderer.renderUI(window, tunnel, player, rockZ)) {
-		tunnel.reset();
+		if (player.z > tunnel.getLength() - 1) difficulty++;
+		tunnel.reset(difficulty);
 		player.reset();
 		renderer.reset();
 		rockZ = ROCK_START_Z;
