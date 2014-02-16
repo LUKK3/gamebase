@@ -58,6 +58,25 @@ void Renderer::renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player
 	text2.setPosition(endX + 24, startY + 5);
 	target.draw(text2);
 
+	if (player.z < 20) {
+		float alpha = 1.0f;
+		if (player.z > 12) {
+			alpha = 1.0f - (player.z - 12.0f) / 8.0f;
+		}
+
+		sf::Text infoText("Escape the", font);
+		infoText.setCharacterSize(60);
+		infoText.setColor(sf::Color(255, 0, 0, alpha * 255));
+		infoText.setPosition(WINDOW_WIDTH / 2 - infoText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText.getLocalBounds().height / 2 - 30);
+		target.draw(infoText);
+
+		sf::Text infoText2("Boulder!", font);
+		infoText2.setCharacterSize(60);
+		infoText2.setColor(sf::Color(255, 0, 0, alpha * 255));
+		infoText2.setPosition(WINDOW_WIDTH / 2 - infoText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText2.getLocalBounds().height / 2 + 30);
+		target.draw(infoText2);
+	}
+
 	// If playerPercent > 1.0f, YOU WIN
 	if (playerPercent == 1.0f) {
 		sf::Text winText("YOU WIN!", font);
@@ -191,9 +210,6 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
 
-	// ratio = 0: 255 - c
-	// ratio = 1: c
-	// delta: 2c - 255
 	float add = 1.0f - lightRatio; //lightRatio * (2 * c - 255);
 	vert1.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
 	vert2.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);

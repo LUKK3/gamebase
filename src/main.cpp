@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 #include "Tunnel.h"
 #include "Renderer.h"
@@ -12,6 +13,8 @@ sf::RenderWindow window;
 sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
+
+sf::Sound boulderSound, fallingSound, jumpingSound;
 
 void events() {
 	while (window.pollEvent(event)) {
@@ -34,14 +37,15 @@ void logic() {
 	int x2 = std::floor(player.x + 1.9);
 	if (!player.fallen && player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
 		player.fallen = true;
+		fallingSound.play();
 	} else if (player.fallen) {
 		player.zVel -= difff * 10;
 		if (player.zVel < 0) player.zVel = 0;
 	} else {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			player.xVel -= difff * 4;
 			if (player.xVel < -1) player.xVel = -1;
-		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) {
+		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right) || sf::Keyboard::isKeyPressed(sf::Keyboard::D)) {
 			player.xVel += difff * 4;
 			if (player.xVel > 1) player.xVel = 1;
 		} else {
@@ -59,10 +63,10 @@ void logic() {
 				}
 			}
 		}
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			player.zVel += difff * 4;
 			if (player.zVel > 7) player.zVel = 7;
-		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
 			player.zVel -= difff * 4;
 			if (player.zVel < 3) player.zVel = 3;
 		} else {
@@ -82,6 +86,7 @@ void logic() {
 		}
 		if (!player.fallen && player.y == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			player.yVel = 4;
+			jumpingSound.play();
 		}
 	}
 	player.yVel -= difff * 15;
@@ -116,6 +121,19 @@ void render() {
 
 // Program entry point
 int main(int argc, char ** argv) {
+	sf::SoundBuffer sb;
+	sb.loadFromFile("assets/avalanche.ogg");
+	boulderSound.setBuffer(sb);
+	boulderSound.setLoop(true);
+	boulderSound.play();
+
+	sf::SoundBuffer sb2;
+	sb2.loadFromFile("assets/death.ogg");
+	fallingSound.setBuffer(sb2);
+
+	sf::SoundBuffer sb3;
+	sb3.loadFromFile("assets/jump.wav");
+	jumpingSound.setBuffer(sb3);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
