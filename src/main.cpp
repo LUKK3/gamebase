@@ -6,9 +6,12 @@
 
 #include <cstdlib>
 
+static const float ROCK_START_Z = -10;
+static const float ROCK_START_VEL = 8.f;
+
 Player player;
-float rockZ = -10;
-float rockVel = 8.f;
+float rockZ = ROCK_START_Z;
+float rockVel = ROCK_START_VEL;
 Tunnel tunnel;
 Renderer renderer;
 
@@ -93,10 +96,11 @@ void logic() {
 		}
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up) || sf::Keyboard::isKeyPressed(sf::Keyboard::W)) {
 			player.zVel += difff * 4;
-			if (player.zVel > 7) player.zVel = 7;
+			if (player.zVel > 8) player.zVel = 8;
 		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
+			player.zVel -= difff * 4;
 			if (player.zVel < 3)
-				player.zVel -= difff * 4;
+				player.zVel = 3;
 		} else {
 			if (player.zVel > 5) {
 				if (player.zVel < 5 + difff * 3) {
@@ -140,7 +144,7 @@ void logic() {
 	}
 
 	rockZ += difff * rockVel;
-	rockVel += difff;
+	rockVel += difff / 2;
 
 	renderer.update(difff);
 
@@ -157,8 +161,8 @@ void render() {
 		tunnel.reset();
 		player.reset();
 		renderer.reset();
-		rockZ = -10;
-		rockVel = 8;
+		rockZ = ROCK_START_Z;
+		rockVel = ROCK_START_VEL;
 		musicSound.setPlayingOffset(sf::Time::Zero);
 		musicSound.play();
 	}
@@ -190,6 +194,7 @@ int main(int argc, char ** argv) {
 	musicSound.setBuffer(sb4);
 	musicSound.setRelativeToListener(true);
 	musicSound.setVolume(30.f);
+	musicSound.setLoop(true);
 	musicSound.play();
 
 	sf::SoundBuffer sb5;
