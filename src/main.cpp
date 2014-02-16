@@ -111,9 +111,13 @@ void logic() {
 			int gem = tunnel.get(z1, x1 + 5);
 			player.score += gem;
 			gemSound.play();
-			if (gem == 1) renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			else if (gem == 2) renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			else if (gem == 3) renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+			if (gem == 1) {
+				renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
+			} else if (gem == 2) {
+				renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
+			} else if (gem == 3) {
+				renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+			}
 			tunnel.set(z1, x1 + 5, 0);
 		}
 
@@ -239,7 +243,7 @@ int main(int argc, char ** argv) {
 	sb4.loadFromFile("assets/POL-flash-run-short.wav");
 	musicSound.setBuffer(sb4);
 	musicSound.setRelativeToListener(true);
-	musicSound.setVolume(30.f);
+	musicSound.setVolume(15.f);
 	musicSound.setLoop(true);
 	musicSound.play();
 
