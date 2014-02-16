@@ -23,7 +23,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound, powerSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound, powerSound, alertSound;
 sf::Texture titleImg;
 
 void resetGame() {
@@ -63,6 +63,7 @@ void logic() {
 		txt.setCharacterSize(36);
 		renderer.addStatusText(txt);
 		player.hasFeather = false;
+		alertSound.play();
 	}
 	float difff2 = (difff + diff.asMicroseconds() / 1000000.f) / 2;
 
@@ -353,6 +354,12 @@ int main(int argc, char ** argv) {
 	powerSound.setRelativeToListener(true);
 	powerSound.setBuffer(sb8);
 	powerSound.setVolume(80);
+
+	sf::SoundBuffer sb9;
+	sb9.loadFromFile("assets/alert.ogg");
+	alertSound.setRelativeToListener(true);
+	alertSound.setBuffer(sb9);
+	//powerSound.setVolume(80);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "A Bolder Escape");
