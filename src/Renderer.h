@@ -24,8 +24,8 @@ class Renderer {
 		void reset();
 
 	private:
-		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x = -1, int z = 0);
-		void drawTileFlat(sf::VertexArray& vertexArray, float z, int x1, int x2, float y1, float y2, const sf::Vector2f* texCoords);
+		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, float x1, float x2, float y1, float y2, int x = -1, int z = 0);
+		void drawTileFlat(sf::VertexArray& vertexArray, float z, float x1, float x2, float y1, float y2, const sf::Vector2f* texCoords);
 
 		sf::Texture tileTexture;
 		sf::Texture playerTexture;
