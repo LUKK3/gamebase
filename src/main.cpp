@@ -51,6 +51,9 @@ void logic() {
 	prevTime = newTime;
 	float difff = diff.asMicroseconds() / 1000000.f;
 
+	player.slowTime -= difff;
+	if (player.slowTime > 1) difff /= player.slowTime;
+
 	int z1 = std::floor(player.z + 1.3);
 	int z2 = std::floor(player.z + 0.9);
 	int x1 = std::floor(player.x + 2.1);
@@ -109,14 +112,18 @@ void logic() {
 			}
 		} else if (!player.fallen && player.y > 0.3 && (tunnel.get(z1, x1 + 5) >= 1 && tunnel.get(z2, x1 + 5) >= 1 && tunnel.get(z1, x2 + 5) >= 1 && tunnel.get(z2, x2 + 5) >= 1)) {
 			int gem = tunnel.get(z1, x1 + 5);
-			player.score += gem;
-			gemSound.play();
-			if (gem == 1) {
-				renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			} else if (gem == 2) {
-				renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			} else if (gem == 3) {
-				renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+			if (gem <= 3) {
+				player.score += gem;
+				gemSound.play();
+				if (gem == 1) {
+					renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
+				} else if (gem == 2) {
+					renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
+				} else if (gem == 3) {
+					renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+				}
+			} else if (gem == 4) {
+				player.slowTime = 10;
 			}
 			tunnel.set(z1, x1 + 5, 0);
 		}
