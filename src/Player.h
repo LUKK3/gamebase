@@ -9,6 +9,9 @@ class Player {
 		bool fallen;
 		int score;
 
+		float feather;
+		float slowTime;
+
 		Player();
 
 		void reset();

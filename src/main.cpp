@@ -23,7 +23,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound, powerSound;
 sf::Texture titleImg;
 
 void resetGame() {
@@ -36,6 +36,7 @@ void resetGame() {
 	rockVel = ROCK_START_VEL;
 	musicSound.setPlayingOffset(sf::Time::Zero);
 	musicSound.play();
+	feetSound.play();
 }
 
 void events() {
@@ -53,6 +54,11 @@ void logic() {
 	prevTime = newTime;
 	float difff = diff.asMicroseconds() / 1000000.f;
 
+	player.slowTime -= difff;
+	if (player.slowTime > 1) difff /= player.slowTime;
+	player.feather -= difff;
+	float difff2 = (difff + diff.asMicroseconds() / 1000000.f) / 2;
+
 	int z1 = std::floor(player.z + 1.3);
 	int z2 = std::floor(player.z + 0.9);
 	int x1 = std::floor(player.x + 2.1);
@@ -69,7 +75,7 @@ void logic() {
 	}
 
 	if (player.fallen) {
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Return)) {
 			resetGame();
 		}
 		feetSound.stop();
@@ -90,7 +96,7 @@ void logic() {
 		musicSound.pause();
 		renderer.addParticles(10, sf::Color(255, 0, 0), sf::Vector3f(player.x, 2, player.z));
 		player.y = -100;
-	} else if (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
+	} else if (!(player.feather > 0) && (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1))) {
 		player.fallen = true;
 		fallingSound.play();
 		musicSound.pause();
@@ -111,14 +117,30 @@ void logic() {
 			}
 		} else if (!player.fallen && player.y > 0.3 && (tunnel.get(z1, x1 + 5) >= 1 && tunnel.get(z2, x1 + 5) >= 1 && tunnel.get(z1, x2 + 5) >= 1 && tunnel.get(z2, x2 + 5) >= 1)) {
 			int gem = tunnel.get(z1, x1 + 5);
-			player.score += gem;
-			gemSound.play();
-			if (gem == 1) {
-				renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			} else if (gem == 2) {
-				renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
-			} else if (gem == 3) {
-				renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+			if (gem <= 3) {
+				player.score += gem;
+				gemSound.play();
+				if (gem == 1) {
+					renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
+				} else if (gem == 2) {
+					renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
+				} else if (gem == 3) {
+					renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+				}
+			} else if (gem == 4) {
+				player.slowTime = 10;
+				powerSound.play();
+			} else if (gem == 5) {
+				for (int i = 5; i < 9; i++) {
+					for (int j = z1 + 1; j <= z1 + 6; j++) {
+						if (j >= tunnel.getLength()) break;
+						if (tunnel.get(j, i) == 0) tunnel.set(j, i, 1);
+					}
+				}
+				powerSound.play();
+			} else if (gem == 6) {
+				player.feather = 5;
+				powerSound.play();
 			}
 			tunnel.set(z1, x1 + 5, 0);
 		}
@@ -186,12 +208,12 @@ void logic() {
 	player.yVel -= difff * 15;
 
 	if (player.z > tunnel.getLength() - 2) {
-
+		feetSound.pause();
 	} else {
 		player.z += player.zVel * difff * 2;
 	}
 	player.y += player.yVel * difff;
-	player.x += player.xVel * difff * 2;
+	player.x += player.xVel * difff2 * 2;
 	if (player.x < -1.9) {
 		player.x = -1.9;
 		player.xVel = 0;
@@ -266,17 +288,26 @@ int main(int argc, char ** argv) {
 	feetSound.setRelativeToListener(true);
 	feetSound.setBuffer(sb5);
 	feetSound.setLoop(true);
+	feetSound.setVolume(50);
 	feetSound.play();
 
 	sf::SoundBuffer sb6;
 	sb6.loadFromFile("assets/bump.ogg");
 	bumpSound.setRelativeToListener(true);
 	bumpSound.setBuffer(sb6);
+	bumpSound.setVolume(40);
 
 	sf::SoundBuffer sb7;
 	sb7.loadFromFile("assets/gem.ogg");
 	gemSound.setRelativeToListener(true);
 	gemSound.setBuffer(sb7);
+	gemSound.setVolume(60);
+
+	sf::SoundBuffer sb8;
+	sb8.loadFromFile("assets/Powerup3.wav");
+	powerSound.setRelativeToListener(true);
+	powerSound.setBuffer(sb8);
+	powerSound.setVolume(80);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "A Bolder Escape");
