@@ -16,6 +16,7 @@ const sf::Vector2f rock2TexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192,
 const sf::Vector2f rock3TexCoords[4]  = {sf::Vector2f(192, 64), sf::Vector2f(256, 64), sf::Vector2f(256, 128), sf::Vector2f(192, 128)};
 const sf::Vector2f webTexCoords[4]   = {sf::Vector2f(64, 64), sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 64)};
 const sf::Vector2f brickTexCoords[4]  = {sf::Vector2f(128, 64), sf::Vector2f(192, 64), sf::Vector2f(192, 128), sf::Vector2f(128, 128)};
+const sf::Vector2f bubbleTexCoords[4]  = {sf::Vector2f(192, 128), sf::Vector2f(256, 128), sf::Vector2f(256, 192), sf::Vector2f(192, 192)};
 const sf::Vector2f cgemTexCoords[4]   = {sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 192), sf::Vector2f(0, 192)};
 const sf::Vector2f rgemTexCoords[4]   = {sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 192), sf::Vector2f(64, 192)};
 const sf::Vector2f ggemTexCoords[4]   = {sf::Vector2f(128, 128), sf::Vector2f(192, 128), sf::Vector2f(192, 192), sf::Vector2f(128, 192)};
@@ -322,9 +323,15 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 			target.draw(rect, states.transform);
 		}
 	}
+
+	if (p.z > tunnel->getLength() - 50) {
+		sf::VertexArray bubbleVA(sf::Quads, 4 * 1);
+		drawTileFlat(bubbleVA, 1, p.x, p.x + 1, -p.y -1, -p.y , bubbleTexCoords);
+		target.draw(bubbleVA, states);
+	}
 }
 
-void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, int x1, int x2, float y1, float y2, const sf::Vector2f* texCoords) {
+void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, float x1, float x2, float y1, float y2, const sf::Vector2f* texCoords) {
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
 
@@ -348,7 +355,7 @@ void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, int x1, int x
 	vertexArray.append(vert4);
 }
 
-void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x, int z) {
+void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float x1, float x2, float y1, float y2, int x, int z) {
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
