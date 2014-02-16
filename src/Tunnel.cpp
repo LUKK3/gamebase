@@ -33,11 +33,12 @@ void Tunnel::reset(int len, int diff) {
 void Tunnel::genTo(int z) {
 	while((int)tunnel.size() < z + 1) {
 		if (rand() % (10 - difficulty) == 1) {
-			if (rand() % 5 == 1) {
+			if (rand() % 10 == 1) {
 				// bridge pool
 				int x = rand() % 2 + 1;
 				int len = rand() % 4 + 4;
-				insertRow();
+				int* arrg = insertRow();
+				arrg[x] = 0;
 				for (int i = 0; i < len; i++) {
 					int* arr = insertRow();
 					for (int j = 0; j < 4; j++) {
@@ -52,7 +53,8 @@ void Tunnel::genTo(int z) {
 						}
 					}
 				}
-				insertRow();
+				arrg = insertRow();
+				arrg[x] = 0;
 			} else {
 				// pool
 				int x = rand() % 4;
