@@ -53,6 +53,7 @@ void logic() {
 
 	player.slowTime -= difff;
 	if (player.slowTime > 1) difff /= player.slowTime;
+	player.feather -= difff;
 
 	int z1 = std::floor(player.z + 1.3);
 	int z2 = std::floor(player.z + 0.9);
@@ -91,7 +92,7 @@ void logic() {
 		musicSound.pause();
 		renderer.addParticles(10, sf::Color(255, 0, 0), sf::Vector3f(player.x, 2, player.z));
 		player.y = -100;
-	} else if (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
+	} else if (!(player.feather > 0) && (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1))) {
 		player.fallen = true;
 		fallingSound.play();
 		musicSound.pause();
@@ -124,6 +125,14 @@ void logic() {
 				}
 			} else if (gem == 4) {
 				player.slowTime = 10;
+			} else if (gem == 5) {
+				for (int i = 5; i < 9; i++) {
+					for (int j = z1 + 1; j <= z1 + 6; j++) {
+						if (tunnel.get(j, i) == 0) tunnel.set(j, i, 1);
+					}
+				}
+			} else if (gem == 6) {
+				player.feather = 5;
 			}
 			tunnel.set(z1, x1 + 5, 0);
 		}

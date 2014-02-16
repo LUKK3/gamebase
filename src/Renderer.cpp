@@ -21,6 +21,9 @@ const sf::Vector2f cgemTexCoords[4]   = {sf::Vector2f(0, 128), sf::Vector2f(64, 
 const sf::Vector2f rgemTexCoords[4]   = {sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 192), sf::Vector2f(64, 192)};
 const sf::Vector2f ggemTexCoords[4]   = {sf::Vector2f(128, 128), sf::Vector2f(192, 128), sf::Vector2f(192, 192), sf::Vector2f(128, 192)};
 const sf::Vector2f bridgeTexCoords[4] = {sf::Vector2f(128, 192), sf::Vector2f(192, 192), sf::Vector2f(192, 256), sf::Vector2f(128, 256)};
+const sf::Vector2f timeTexCoords[4]   = {sf::Vector2f(256, 0), sf::Vector2f(320, 0), sf::Vector2f(320, 64), sf::Vector2f(256, 64)};
+const sf::Vector2f rubyTexCoords[4]   = {sf::Vector2f(320, 0), sf::Vector2f(384, 0), sf::Vector2f(384, 64), sf::Vector2f(320, 64)};
+const sf::Vector2f hoverTexCoords[4]  = {sf::Vector2f(384, 0), sf::Vector2f(446, 0), sf::Vector2f(446, 64), sf::Vector2f(384, 64)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -260,6 +263,9 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 			if (tunnel->get(i, j + 5) == 1) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, rgemTexCoords);
 			else if (tunnel->get(i, j + 5) == 2) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, ggemTexCoords);
 			else if (tunnel->get(i, j + 5) == 3) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, cgemTexCoords);
+			else if (tunnel->get(i, j + 5) == 4) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, timeTexCoords);
+			else if (tunnel->get(i, j + 5) == 5) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, rubyTexCoords);
+			else if (tunnel->get(i, j + 5) == 6) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, hoverTexCoords);
 		}
 
 		if (tunnel->getWeb(i, 0)) {
@@ -281,7 +287,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 	sprite.setTexture(playerTexture);
 	sprite.setOrigin(32, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
-	sprite.setColor(sf::Color(255, 255, 255, 127));
+	if (p.feather > 1 || (p.feather > 0 && frame % 2)) {
+		sprite.setColor(sf::Color(255, 127, 0, 127));
+	} else {
+		sprite.setColor(sf::Color(255, 255, 255, 127));
+	}
 	target.draw(sprite, states.transform);
 
 	if (rockZ > z - 0.5) {

@@ -107,6 +107,8 @@ int* Tunnel::insertRow() {
 	}
 	if (rand() % (30 + difficulty * 10) == 0) {
 		arr[rand() % 4 + 5] = rand() % 3 + 1;
+	} else if (rand() % 100 == 0) {
+		arr[rand() % 4 + 5] = rand() % 3 + 4;
 	}
 	return arr;
 }
