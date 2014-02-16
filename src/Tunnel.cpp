@@ -37,9 +37,10 @@ void Tunnel::genTo(int z) {
 				// bridge pool
 				int x = rand() % 2 + 1;
 				int len = rand() % 4 + 4;
+				insertRow();
 				for (int i = 0; i < len; i++) {
 					int* arr = insertRow();
-					for (int j = 0; j < len; j++) {
+					for (int j = 0; j < 4; j++) {
 						if (j == x) {
 							arr[j] = 5;
 						} else {
@@ -51,6 +52,7 @@ void Tunnel::genTo(int z) {
 						}
 					}
 				}
+				insertRow();
 			} else {
 				// pool
 				int x = rand() % 4;
