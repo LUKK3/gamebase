@@ -124,7 +124,7 @@ bool Tunnel::getWeb(int z, int x) {
 int Tunnel::get(int z, int x) {
 	if (x < 0) return 0;
 	if (x > WID) return 0;
-	if(z > length) return 0;
+	if(z > length - 2) return 0;
 	genTo(z);
 	return tunnel[z][x];
 }

@@ -5,6 +5,9 @@
 
 #define TILE_SIZE 100
 
+const sf::Color mainFontColor = sf::Color(255, 120, 0, 255);
+const sf::Color subFontColor = sf::Color(220, 220, 220, 255);
+
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
 const sf::Vector2f dungeonTexCoords[4] = {sf::Vector2f(0, 192), sf::Vector2f(64, 192), sf::Vector2f(64, 256), sf::Vector2f(0, 256)};
 const sf::Vector2f blueTexCoords[4] = {sf::Vector2f(64, 192), sf::Vector2f(128, 192), sf::Vector2f(128, 256), sf::Vector2f(64, 256)};
@@ -36,7 +39,7 @@ Renderer::Renderer() {
 	gauge.loadFromFile("assets/gauge.png");
 	playerInd.loadFromFile("assets/guy_marker.png");
 	boulderInd.loadFromFile("assets/boulder_marker.png");
-    font.loadFromFile("assets/goldbox.ttf");
+    font.loadFromFile("assets/comicbook.ttf");
 
     tim = 0;
 }
@@ -55,6 +58,31 @@ void Renderer::update(float diff) {
 		iter->update(diff);
 	}
 	tim += diff;
+}
+
+void renderOutline(sf::RenderWindow& window, sf::Text& text, sf::Color col) {
+	sf::Color tmp = text.getColor();
+	text.setColor(col);
+
+	text.setOrigin(2, 2);
+	window.draw(text);
+	text.setOrigin(-2, 2);
+	window.draw(text);
+	text.setOrigin(2, -2);
+	window.draw(text);
+	text.setOrigin(-2, -2);
+	window.draw(text);
+	text.setOrigin(-2, 0);
+	window.draw(text);
+	text.setOrigin(2, 0);
+	window.draw(text);
+	text.setOrigin(0, -2);
+	window.draw(text);
+	text.setOrigin(0, 2);
+	window.draw(text);
+
+	text.setColor(tmp);
+	text.setOrigin(0, 0);
 }
 
 bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ) {
@@ -90,6 +118,7 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 	sf::Text text(ss.str(), font);
 	text.setCharacterSize(20);
 	text.setPosition(startX - text.getLocalBounds().width - 24, startY + 5);
+	renderOutline(target, text, sf::Color(0, 0, 0, 255));
 	target.draw(text);
 
 	std::stringstream ss2;
@@ -97,14 +126,19 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 	sf::Text text2(ss2.str(), font);
 	text2.setCharacterSize(20);
 	text2.setPosition(endX + 24, startY + 5);
+	renderOutline(target, text2, sf::Color(0, 0, 0, 255));
 	target.draw(text2);
 
 	std::stringstream ss0;
 	ss0 << "Score: " << player.score;
+	if (player.score < 5) {
+		ss0 << " (need " << 5 - player.score << " more)";
+	}
 	sf::Text text0(ss0.str(), font);
 	text0.setCharacterSize(30);
 	text0.setPosition(startX - 24, startY + 30);
 	if (player.score >= 5) text0.setColor(sf::Color::Yellow);
+	renderOutline(target, text0, sf::Color(0, 0, 0, 255));
 	target.draw(text0);
 
 	if (player.fallen) {
@@ -112,17 +146,20 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		std::string diedString = (player.score >= 5 && player.z > tunnel.getLength() - 2) ? "You... won?" : "You lose!";
 		sf::Text diedText(diedString, font);
 		diedText.setCharacterSize(80);
-		diedText.setColor(sf::Color(255, 0, 0, 255));
-		diedText.setPosition(WINDOW_WIDTH / 2 - diedText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText.getLocalBounds().height / 2 - 100);
+		diedText.setPosition(WINDOW_WIDTH / 2 - diedText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText.getLocalBounds().height / 2 - 120);
+		diedText.setColor(mainFontColor);
+		renderOutline(target, diedText, sf::Color(0, 0, 0, 255));
 		target.draw(diedText);
 
 		// TRY AGAIN
 		diedString = (player.score >= 5 && player.z > tunnel.getLength() - 2) ? "Go to next level?" : "Try again?";
 		sf::Text diedText2(diedString, font);
 		diedText2.setCharacterSize(48);
-		diedText2.setColor(sf::Color(255, 0, 0, 255));
 		diedText2.setPosition(WINDOW_WIDTH / 2 - diedText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText2.getLocalBounds().height / 2 - 20);
+		diedText2.setColor(subFontColor);
+		renderOutline(target, diedText2, sf::Color(0, 0, 0, 255));
 		target.draw(diedText2);
+
 
 		sf::Mouse mouse;
 		sf::Vector2i pos = mouse.getPosition(target);
@@ -142,13 +179,15 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		} else {
 			diedText3.setColor(sf::Color(0, 255, 255, 255));
 		}
+		renderOutline(target, diedText3, sf::Color(0, 0, 0, 255));
 		target.draw(diedText3);
 
 		// separator
 		sf::Text diedText4("/", font);
 		diedText4.setCharacterSize(48);
 		diedText4.setPosition(WINDOW_WIDTH / 2 - diedText4.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText4.getLocalBounds().height / 2 + 30);
-		diedText4.setColor(sf::Color(255, 0, 0, 255));
+		diedText4.setColor(subFontColor);
+		renderOutline(target, diedText4, sf::Color(0, 0, 0, 255));
 		target.draw(diedText4);
 
 		// NO button
@@ -167,6 +206,7 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		} else {
 			diedText5.setColor(sf::Color(0, 255, 255, 255));
 		}
+		renderOutline(target, diedText5, sf::Color(0, 0, 0, 255));
 		target.draw(diedText5);
 	}
 
@@ -178,15 +218,24 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 
 		sf::Text infoText("Escape the", font);
 		infoText.setCharacterSize(60);
-		infoText.setColor(sf::Color(255, 0, 0, alpha * 255));
-		infoText.setPosition(WINDOW_WIDTH / 2 - infoText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText.getLocalBounds().height / 2 - 30);
+		infoText.setColor(sf::Color(mainFontColor.r, mainFontColor.g, mainFontColor.b, alpha * 255));
+		infoText.setPosition(WINDOW_WIDTH / 2 - infoText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText.getLocalBounds().height / 2 - 50);
+		renderOutline(target, infoText, sf::Color(0, 0, 0, alpha * 255));
 		target.draw(infoText);
 
 		sf::Text infoText2("Boulder!", font);
 		infoText2.setCharacterSize(60);
-		infoText2.setColor(sf::Color(255, 0, 0, alpha * 255));
-		infoText2.setPosition(WINDOW_WIDTH / 2 - infoText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText2.getLocalBounds().height / 2 + 30);
+		infoText2.setColor(sf::Color(mainFontColor.r, mainFontColor.g, mainFontColor.b, alpha * 255));
+		infoText2.setPosition(WINDOW_WIDTH / 2 - infoText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText2.getLocalBounds().height / 2 + 10);
+		renderOutline(target, infoText2, sf::Color(0, 0, 0, alpha * 255));
 		target.draw(infoText2);
+
+		sf::Text infoText3("(And collect 5 gems)", font);
+		infoText3.setCharacterSize(36);
+		infoText3.setColor(sf::Color(subFontColor.r, subFontColor.g, subFontColor.b, alpha * 255));
+		infoText3.setPosition(WINDOW_WIDTH / 2 - infoText3.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText3.getLocalBounds().height / 2 + 70);
+		renderOutline(target, infoText3, sf::Color(0, 0, 0, alpha * 255));
+		target.draw(infoText3);
 	}
 	return false;
 }
