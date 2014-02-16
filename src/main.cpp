@@ -24,6 +24,18 @@ sf::Time prevTime;
 
 sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound;
 
+void resetGame() {
+	std::cout << player.z << " " << tunnel.getLength() - 1 << std::endl;
+	if (player.z > tunnel.getLength() - 2 && player.score >= 5) difficulty++;
+	tunnel.reset((difficulty + 2) * 100, difficulty);
+	player.reset();
+	renderer.reset();
+	rockZ = ROCK_START_Z;
+	rockVel = ROCK_START_VEL;
+	musicSound.setPlayingOffset(sf::Time::Zero);
+	musicSound.play();
+}
+
 void events() {
 	while (window.pollEvent(event)) {
 		switch(event.type) {
@@ -55,6 +67,9 @@ void logic() {
 	}
 
 	if (player.fallen) {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			resetGame();
+		}
 		feetSound.stop();
 		player.zVel -= difff * 10;
 		if (player.zVel < 0) player.zVel = 0;
@@ -193,15 +208,7 @@ void render() {
 
 	renderer.render(window, tunnel, player, rockZ);
 	if (renderer.renderUI(window, tunnel, player, rockZ)) {
-		std::cout << player.z << " " << tunnel.getLength() - 1 << std::endl;
-		if (player.z > tunnel.getLength() - 2 && player.score >= 5) difficulty++;
-		tunnel.reset((difficulty + 2) * 100, difficulty);
-		player.reset();
-		renderer.reset();
-		rockZ = ROCK_START_Z;
-		rockVel = ROCK_START_VEL;
-		musicSound.setPlayingOffset(sf::Time::Zero);
-		musicSound.play();
+		resetGame();
 	}
 
 	// Notify the window that we're ready to render
