@@ -22,7 +22,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound;
 
 void events() {
 	while (window.pollEvent(event)) {
@@ -93,6 +93,7 @@ void logic() {
 		} else if (!player.fallen && player.y > 0.3 && (tunnel.get(z1, x1 + 5) >= 1 && tunnel.get(z2, x1 + 5) >= 1 && tunnel.get(z1, x2 + 5) >= 1 && tunnel.get(z2, x2 + 5) >= 1)) {
 			int gem = tunnel.get(z1, x1 + 5);
 			player.score += gem;
+			gemSound.play();
 			if (gem == 1) renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
 			else if (gem == 2) renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
 			else if (gem == 3) renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
@@ -234,13 +235,20 @@ int main(int argc, char ** argv) {
 
 	sf::SoundBuffer sb5;
 	sb5.loadFromFile("assets/footsteps.ogg");
+	feetSound.setRelativeToListener(true);
 	feetSound.setBuffer(sb5);
 	feetSound.setLoop(true);
 	feetSound.play();
 
 	sf::SoundBuffer sb6;
 	sb6.loadFromFile("assets/bump.ogg");
+	bumpSound.setRelativeToListener(true);
 	bumpSound.setBuffer(sb6);
+
+	sf::SoundBuffer sb7;
+	sb7.loadFromFile("assets/gem.ogg");
+	gemSound.setRelativeToListener(true);
+	gemSound.setBuffer(sb7);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
