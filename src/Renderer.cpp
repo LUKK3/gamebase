@@ -6,6 +6,7 @@
 #define TILE_SIZE 100
 
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
+const sf::Vector2f darkStoneTexCoords[4] = {sf::Vector2f(0, 64), sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 64)};
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
 const sf::Vector2f rockTexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
 
@@ -176,10 +177,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 
 	float quake = 1 / std::max(std::abs(z - rockZ), 1.f);
 	states.transform.translate(rand() / (float)RAND_MAX * quake * 30, rand() / (float)RAND_MAX * quake * 30);
-
 	states.transform.scale(2.5, 2.5);
-
-
 
 	tunnel = &t;
 	player = &p;
@@ -189,9 +187,6 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
         lightRatio = (z - tunnel->getLength() + 20) / 20.0f;
 	} else if (z >= tunnel->getLength()) {
         lightRatio = 1.0f;
-	}
-	if (lightRatio > 1.0f || lightRatio < 0.0f) {
-		printf("%f", lightRatio);
 	}
 
 	sf::RectangleShape lightShape;
@@ -209,7 +204,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 		if (z0 < 60) {
 			for (int j = 0; j < 4; j++) {
 				if (t.get(i, j) == 1 && t.get(i + 1, j) != 1) {
-					drawTileFlat(vertexArray, z0 + 1, j - 2, j - 1, 2, 3, stoneTexCoords);
+					drawTileFlat(vertexArray, z0 + 1, j - 2, j - 1, 2, 3, darkStoneTexCoords);
 				}
 			}
 		}
@@ -241,8 +236,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 
 	static float sz1 = std::sqrt(1.5);
 	sf::Sprite sprite;
+
+	int frame = 0 + (int)z % 3;
+	sprite.setTextureRect(sf::IntRect(sf::Vector2i(frame * 64, 0), sf::Vector2i(64, 128)));
 	sprite.setTexture(playerTexture);
-	sprite.setOrigin(playerTexture.getSize().x / 2, 0);
+	sprite.setOrigin(32, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
 	target.draw(sprite, states.transform);
 
@@ -321,7 +319,6 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	shape.setPointCount(4);
 	//shape.setTexture(&texture);
 	//shape.setTextureRect(sf::IntRect(0, 0, 64, 64));
-
 	float sz = std::sqrt(z1 + 1.5);
 	float sz2 = std::sqrt(z2 + 1.5);
 
