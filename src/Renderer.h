@@ -10,6 +10,11 @@
 
 #include <SFML/Graphics.hpp>
 
+struct FloatingText {
+	sf::Text text;
+	float time;
+};
+
 class Renderer {
 	public:
 		Renderer();
@@ -20,12 +25,17 @@ class Renderer {
 		bool renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ);
 
 		void addParticles(int num, sf::Color color, sf::Vector3f position);
+		void addStatusText(sf::Text text);
+
+        sf::Font& getFont();
 
 		void reset();
 
 	private:
 		void drawTile(sf::VertexArray& vertexArray, float z1, float z2, float x1, float x2, float y1, float y2, int x = -1, int z = 0, bool lava = false);
 		void drawTileFlat(sf::VertexArray& vertexArray, float z, float x1, float x2, float y1, float y2, const sf::Vector2f* texCoords);
+
+		std::vector<FloatingText> statusTexts;
 
 		sf::Texture tileTexture;
 		sf::Texture playerTexture;

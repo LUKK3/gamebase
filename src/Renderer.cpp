@@ -44,9 +44,14 @@ Renderer::Renderer() {
     tim = 0;
 }
 
+sf::Font& Renderer::getFont() {
+	return this->font;
+}
+
 void Renderer::reset() {
 	tim = 0;
 	particlesSet.clear();
+	statusTexts.clear();
 }
 
 void Renderer::addParticles(int num, sf::Color color, sf::Vector3f position) {
@@ -57,6 +62,20 @@ void Renderer::update(float diff) {
 	for (auto iter = particlesSet.begin(); iter != particlesSet.end(); ++iter) {
 		iter->update(diff);
 	}
+
+	for (auto &stext : statusTexts) {
+        stext.text.move(0, -70 * diff);
+        stext.time += diff;
+
+		sf::Color col = stext.text.getColor();
+        if (stext.time > 0.9f && stext.time < 1.5f) {
+            col.a = 255 - (stext.time - 0.9f) / 0.6f * 255;
+        } else if (stext.time >= 1.5f) {
+        	col.a = 0;
+        }
+        stext.text.setColor(col);
+	}
+
 	tim += diff;
 }
 
@@ -236,6 +255,12 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		infoText3.setPosition(WINDOW_WIDTH / 2 - infoText3.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText3.getLocalBounds().height / 2 + 70);
 		renderOutline(target, infoText3, sf::Color(0, 0, 0, alpha * 255));
 		target.draw(infoText3);
+	}
+
+	// Render status texts
+	for (auto stext : statusTexts) {
+		renderOutline(target, stext.text, sf::Color(0, 0, 0, stext.text.getColor().a));
+        target.draw(stext.text);
 	}
 	return false;
 }
@@ -470,4 +495,12 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float 
 	vertexArray.append(vert2);
 	vertexArray.append(vert3);
 	vertexArray.append(vert4);
+}
+
+void Renderer::addStatusText(sf::Text text) {
+	text.setPosition(WINDOW_WIDTH / 2 - text.getLocalBounds().width / 2, 200);
+	FloatingText ft;
+	ft.text = text;
+	ft.time = 0.0f;
+	statusTexts.push_back(ft);
 }

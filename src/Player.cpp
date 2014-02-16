@@ -12,6 +12,7 @@ void Player::reset() {
 	yVel = 0;
 	zVel = 5;
 	fallen = false;
+	hasFeather = false;
 	score = 0;
 	feather = 0;
 	slowTime = 0;

@@ -57,6 +57,13 @@ void logic() {
 	player.slowTime -= difff;
 	if (player.slowTime > 1) difff /= player.slowTime;
 	player.feather -= difff;
+	if (player.feather < 0.0f && player.hasFeather) {
+		sf::Text txt("Lavawalk expired", renderer.getFont());
+		txt.setColor(sf::Color(255, 255, 0, 255));
+		txt.setCharacterSize(36);
+		renderer.addStatusText(txt);
+		player.hasFeather = false;
+	}
 	float difff2 = (difff + diff.asMicroseconds() / 1000000.f) / 2;
 
 	int z1 = std::floor(player.z + 1.3);
@@ -101,6 +108,13 @@ void logic() {
 		fallingSound.play();
 		musicSound.pause();
 		renderer.addParticles(10, sf::Color(255, 127, 0), sf::Vector3f(player.x, 3, player.z));
+
+		/*
+		sf::Text txt("Fail!", renderer.getFont());
+		txt.setColor(sf::Color(255, 0, 0, 255));
+		txt.setCharacterSize(36);
+		renderer.addStatusText(txt);
+		*/
 	} else {
 		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
 			int rok = tunnel.get(z1, x1);
@@ -122,14 +136,34 @@ void logic() {
 				gemSound.play();
 				if (gem == 1) {
 					renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
+
+					sf::Text txt("Ruby: +1", renderer.getFont());
+					txt.setColor(sf::Color(255, 0, 0, 255));
+					txt.setCharacterSize(36);
+					renderer.addStatusText(txt);
 				} else if (gem == 2) {
 					renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
+
+					sf::Text txt("Emerald: +2", renderer.getFont());
+					txt.setColor(sf::Color(0, 255, 0, 255));
+					txt.setCharacterSize(36);
+					renderer.addStatusText(txt);
 				} else if (gem == 3) {
 					renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
+
+					sf::Text txt("Diamond: +3", renderer.getFont());
+					txt.setColor(sf::Color(0, 255, 255, 255));
+					txt.setCharacterSize(36);
+					renderer.addStatusText(txt);
 				}
 			} else if (gem == 4) {
 				player.slowTime = 10;
 				powerSound.play();
+
+				sf::Text txt("Slow Time acquired", renderer.getFont());
+				txt.setColor(sf::Color(192, 0, 255, 255));
+				txt.setCharacterSize(36);
+				renderer.addStatusText(txt);
 			} else if (gem == 5) {
 				for (int i = 5; i < 9; i++) {
 					for (int j = z1 + 1; j <= z1 + 6; j++) {
@@ -138,9 +172,20 @@ void logic() {
 					}
 				}
 				powerSound.play();
+
+				sf::Text txt("Rain Rubies acquired", renderer.getFont());
+				txt.setColor(sf::Color(192, 0, 255, 255));
+				txt.setCharacterSize(36);
+				renderer.addStatusText(txt);
 			} else if (gem == 6) {
 				player.feather = 5;
+				player.hasFeather = true;
 				powerSound.play();
+
+				sf::Text txt("Lavawalk acquired", renderer.getFont());
+				txt.setColor(sf::Color(192, 0, 255, 255));
+				txt.setCharacterSize(36);
+				renderer.addStatusText(txt);
 			}
 			tunnel.set(z1, x1 + 5, 0);
 		}
