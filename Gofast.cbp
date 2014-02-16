@@ -38,8 +38,11 @@
 			<Add library="sfml-system" />
 			<Add library="sfml-window" />
 			<Add library="sfml-graphics" />
+			<Add library="sfml-audio" />
 			<Add directory="mydeps/lib" />
 		</Linker>
+		<Unit filename="src/Particles.cpp" />
+		<Unit filename="src/Particles.h" />
 		<Unit filename="src/Player.cpp" />
 		<Unit filename="src/Player.h" />
 		<Unit filename="src/Renderer.cpp" />

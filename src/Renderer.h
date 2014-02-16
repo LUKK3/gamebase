@@ -17,7 +17,7 @@ class Renderer {
 		void update(float diff);
 
 		void render(sf::RenderTarget& target, Tunnel& tunnel, Player& player, float rockZ);
-		void renderUI(sf::RenderTarget& target, Tunnel& tunnel, Player& player, float rockZ);
+		void renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ);
 
 		void addParticles(int num, sf::Color color, sf::Vector3f position);
 
