@@ -81,7 +81,9 @@ int* Tunnel::insertRow() {
 		arr[i] = 0;
 		if (i < 4) {
 			int r = rand() % 100;
-			if (r < 3) arr[i] = 2;
+			if (r == 0) arr[i] = 2;
+			else if (r == 1) arr[i] = 3;
+			else if (r == 2) arr[i] = 4;
 			else if (r == 6) arr[i] = 1;
 		} else {
 			int r = rand() % 300;

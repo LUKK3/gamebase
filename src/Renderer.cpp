@@ -8,7 +8,9 @@
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
 const sf::Vector2f darkStoneTexCoords[4] = {sf::Vector2f(0, 64), sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 64)};
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
-const sf::Vector2f rockTexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
+const sf::Vector2f rock1TexCoords[4]  = {sf::Vector2f(192, 0), sf::Vector2f(256, 0), sf::Vector2f(256, 64), sf::Vector2f(192, 64)};
+const sf::Vector2f rock2TexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
+const sf::Vector2f rock3TexCoords[4]  = {sf::Vector2f(192, 64), sf::Vector2f(256, 64), sf::Vector2f(256, 128), sf::Vector2f(192, 128)};
 const sf::Vector2f webTexCoords[4]   = {sf::Vector2f(64, 64), sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 64)};
 const sf::Vector2f brickTexCoords[4]  = {sf::Vector2f(128, 64), sf::Vector2f(192, 64), sf::Vector2f(192, 128), sf::Vector2f(128, 128)};
 
@@ -239,10 +241,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  0,  1);
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  1,  2);
 
-		if (tunnel->get(i, 0) == 2) drawTileFlat(vertexArray, z0 + 0.5, -2, -1, 1., 2., rockTexCoords);
-		if (tunnel->get(i, 1) == 2) drawTileFlat(vertexArray, z0 + 0.5, -1,  0, 1., 2., rockTexCoords);
-		if (tunnel->get(i, 2) == 2) drawTileFlat(vertexArray, z0 + 0.5,  0,  1, 1., 2., rockTexCoords);
-		if (tunnel->get(i, 3) == 2) drawTileFlat(vertexArray, z0 + 0.5,  1,  2, 1., 2., rockTexCoords);
+		for (int j = 0; j < 4; j++) {
+			if (tunnel->get(i, j) == 3) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock1TexCoords);
+			else if (tunnel->get(i, j) == 2) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock2TexCoords);
+			else if (tunnel->get(i, j) == 4) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock3TexCoords);
+		}
 
 		if (tunnel->getWeb(i, 0)) {
 			drawTileFlat(vertexArray, z0 + 1, -1, -2, -2, -1, webTexCoords);
