@@ -20,6 +20,7 @@ const sf::Vector2f bubbleTexCoords[4]  = {sf::Vector2f(192, 128), sf::Vector2f(2
 const sf::Vector2f cgemTexCoords[4]   = {sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 192), sf::Vector2f(0, 192)};
 const sf::Vector2f rgemTexCoords[4]   = {sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 192), sf::Vector2f(64, 192)};
 const sf::Vector2f ggemTexCoords[4]   = {sf::Vector2f(128, 128), sf::Vector2f(192, 128), sf::Vector2f(192, 192), sf::Vector2f(128, 192)};
+const sf::Vector2f bridgeTexCoords[4] = {sf::Vector2f(128, 192), sf::Vector2f(192, 192), sf::Vector2f(192, 256), sf::Vector2f(128, 256)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -225,7 +226,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 
 		if (z0 < 60) {
 			for (int j = 0; j < 4; j++) {
-				if (t.get(i, j) == 1 && t.get(i + 1, j) != 1) {
+				if ((t.get(i, j) == 1 || t.get(i, j) == 5) && !(t.get(i + 1, j) == 1 || t.get(i + 1, j) == 5)) {
 					drawTileFlat(vertexArray, z0 + 1, j - 2, j - 1, 2, 3, darkStoneTexCoords);
 				}
 			}
@@ -355,7 +356,7 @@ void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, float x1, flo
 	vertexArray.append(vert4);
 }
 
-void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float x1, float x2, float y1, float y2, int x, int z) {
+void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float x1, float x2, float y1, float y2, int x, int z, bool lava) {
 
 	sf::ConvexShape shape;
 	shape.setPointCount(4);
@@ -365,16 +366,19 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float 
 	float sz2 = std::sqrt(z2 + 1.5);
 
 	const sf::Vector2f* texCoords;
-	if (x != -1 && tunnel->get(z, x) == 1) {
+	if (lava || (x != -1 && tunnel->get(z, x) == 1)) {
 		y1 += .2f;
 		y2 += .2f;
 		texCoords = lavaTexCoords;
 
-		if (x == 0 || (x == 1 && tunnel->get(z, 0) == 0)) {
+		if (x == 0 || (x == 1 && (tunnel->get(z, 0) == 0 || tunnel->get(z, 0) == 5))) {
 			drawTile(vertexArray, z1, z2, x1, x1, 2, 3);
-		} else if (x == 3 || (x == 2 && tunnel->get(z, 3) == 0)) {
+		} else if (x == 3 || (x == 2 && (tunnel->get(z, 3) == 0 || tunnel->get(z, 3) == 5))) {
 			drawTile(vertexArray, z1, z2, x2, x2, 2, 3);
 		}
+	} else if (tunnel->get(z, x) == 5) {
+		drawTile(vertexArray, z1, z2, x1, x2, y1, y2, x, z, true);
+		texCoords = bridgeTexCoords;
 	} else {
 		if (tunnel->getDifficulty() == 1) {
 			texCoords = dungeonTexCoords;
