@@ -24,6 +24,11 @@ Renderer::Renderer() {
     tim = 0;
 }
 
+void Renderer::reset() {
+	tim = 0;
+	particlesSet.clear();
+}
+
 void Renderer::addParticles(int num, sf::Color color, sf::Vector3f position) {
 	particlesSet.emplace_back(num, color, position);
 }
@@ -35,7 +40,7 @@ void Renderer::update(float diff) {
 	tim += diff;
 }
 
-void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ) {
+bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ) {
 	float boulderPercent = rockZ / tunnel.getLength();
 	boulderPercent = boulderPercent > 1.0f ? 1.0f : boulderPercent;
 
@@ -102,6 +107,9 @@ void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		if (pos.x > rect.left && pos.x < rect.left + rect.width &&
 			pos.y > rect.top && pos.y < rect.top + rect.height) {
 			diedText3.setColor(sf::Color(0, 255, 0, 255));
+			if (mouse.isButtonPressed(sf::Mouse::Left)) {
+                return true;
+			}
 		} else {
 			diedText3.setColor(sf::Color(0, 255, 255, 255));
 		}
@@ -123,9 +131,6 @@ void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		if (pos.x > rect.left && pos.x < rect.left + rect.width &&
 			pos.y > rect.top && pos.y < rect.top + rect.height) {
 			diedText5.setColor(sf::Color(0, 255, 0, 255));
-			if (mouse.isButtonPressed(sf::Mouse::Left)) {
-                printf("RESTART\n");
-			}
 		} else {
 			diedText5.setColor(sf::Color(0, 255, 255, 255));
 		}
@@ -159,6 +164,7 @@ void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		winText.setPosition(WINDOW_WIDTH / 2 - winText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - winText.getLocalBounds().height / 2);
 		target.draw(winText);
 	}
+	return false;
 }
 
 void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rockZ) {

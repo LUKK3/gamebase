@@ -17,7 +17,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, musicSound;
 
 void events() {
 	while (window.pollEvent(event)) {
@@ -54,11 +54,13 @@ void logic() {
 	} else if (rockZ > player.z) {
 		player.fallen = true;
 		fallingSound.play();
+		musicSound.pause();
 		renderer.addParticles(10, sf::Color(255, 0, 0), sf::Vector3f(player.x, 2, player.z));
 		player.y = -100;
 	} else if (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
 		player.fallen = true;
 		fallingSound.play();
+		musicSound.pause();
 		renderer.addParticles(10, sf::Color(255, 127, 0), sf::Vector3f(player.x, 3, player.z));
 	} else {
 		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
@@ -136,6 +138,9 @@ void logic() {
 	rockVel += difff;
 
 	renderer.update(difff);
+
+	sf::Listener::setPosition(player.x / 10, player.y / 10, player.z / 10);
+	boulderSound.setPosition(0, 0, rockZ / 10 + 2);
 }
 
 void render() {
@@ -143,7 +148,15 @@ void render() {
 	window.clear();
 
 	renderer.render(window, tunnel, player, rockZ);
-	renderer.renderUI(window, tunnel, player, rockZ);
+	if (renderer.renderUI(window, tunnel, player, rockZ)) {
+		tunnel.reset();
+		player.reset();
+		renderer.reset();
+		rockZ = -10;
+		rockVel = 8;
+		musicSound.setPlayingOffset(sf::Time::Zero);
+		musicSound.play();
+	}
 
 	// Notify the window that we're ready to render
 	window.display();
@@ -160,10 +173,19 @@ int main(int argc, char ** argv) {
 	sf::SoundBuffer sb2;
 	sb2.loadFromFile("assets/death.ogg");
 	fallingSound.setBuffer(sb2);
+	fallingSound.setRelativeToListener(true);
 
 	sf::SoundBuffer sb3;
 	sb3.loadFromFile("assets/jump.wav");
 	jumpingSound.setBuffer(sb3);
+	jumpingSound.setRelativeToListener(true);
+
+	sf::SoundBuffer sb4;
+	sb4.loadFromFile("assets/POL-flash-run-short.wav");
+	musicSound.setBuffer(sb4);
+	musicSound.setRelativeToListener(true);
+	musicSound.setVolume(30.f);
+	musicSound.play();
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");

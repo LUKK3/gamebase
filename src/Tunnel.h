@@ -14,6 +14,8 @@ class Tunnel {
 
 		int getLength();
 
+		void reset();
+
 	private:
 		std::vector<int*> tunnel;
 		int length;

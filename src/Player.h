@@ -10,6 +10,8 @@ class Player {
 
 		Player();
 
+		void reset();
+
 	private:
 };
 

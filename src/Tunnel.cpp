@@ -4,17 +4,22 @@
 Tunnel::Tunnel(int length) {
     this->length = length;
 
-    tunnel.resize(10);
+    reset();
+}
+
+int Tunnel::getLength() {
+	return length;
+}
+
+void Tunnel::reset() {
+	tunnel.clear();
+	tunnel.resize(10);
     for (int i = 0; i < 10; i++) {
 		tunnel[i] = new int[4];
 		for (int j = 0; j < 4; j++) {
 			tunnel[i][j] = 0;
 		}
     }
-}
-
-int Tunnel::getLength() {
-	return length;
 }
 
 void Tunnel::genTo(int z) {

@@ -1,6 +1,10 @@
 #include "Player.h"
 
 Player::Player() {
+	reset();
+}
+
+void Player::reset() {
 	x = 0;
 	y = 0;
 	z = 0;
