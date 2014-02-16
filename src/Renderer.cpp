@@ -132,6 +132,7 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		if (pos.x > rect.left && pos.x < rect.left + rect.width &&
 			pos.y > rect.top && pos.y < rect.top + rect.height) {
 			diedText5.setColor(sf::Color(0, 255, 0, 255));
+			diedText5.setString("YES");
 		} else {
 			diedText5.setColor(sf::Color(0, 255, 255, 255));
 		}
