@@ -5,7 +5,7 @@
 
 class Tunnel {
 	public:
-		Tunnel(int length = 300, int difficulty = 0);
+		Tunnel(int length = 200, int difficulty = 0);
 
 		void genTo(int z);
 
@@ -19,7 +19,9 @@ class Tunnel {
 		bool hasBrickWall();
 		void breakWall();
 
-		void reset(int difficulty);
+		int getDifficulty();
+
+		void reset(int length, int difficulty);
 
 	private:
 		int* insertRow();

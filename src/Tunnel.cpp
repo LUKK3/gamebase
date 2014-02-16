@@ -4,9 +4,8 @@
 #define WID 9
 
 Tunnel::Tunnel(int length, int diff) {
-    this->length = length;
 	brickWall = true;
-    reset(diff);
+    reset(length, diff);
 }
 
 int Tunnel::getLength() {
@@ -17,8 +16,9 @@ bool Tunnel::hasBrickWall() {
 	return brickWall;
 }
 
-void Tunnel::reset(int diff) {
+void Tunnel::reset(int len, int diff) {
 	difficulty = diff;
+	length = len;
 	tunnel.clear();
 	tunnel.resize(20);
     for (int i = 0; i < 20; i++) {
@@ -81,10 +81,14 @@ int* Tunnel::insertRow() {
 			}
 		}
 	}
-	if (rand() % 20 == 0) {
+	if (rand() % (30 + difficulty * 10) == 0) {
 		arr[rand() % 4 + 5] = rand() % 3 + 1;
 	}
 	return arr;
+}
+
+int Tunnel::getDifficulty() {
+	return difficulty;
 }
 
 bool Tunnel::getWeb(int z, int x) {
