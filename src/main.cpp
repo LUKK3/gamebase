@@ -22,7 +22,7 @@ sf::Event event;
 sf::Clock mainClock;
 sf::Time prevTime;
 
-sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound;
+sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound, powerSound;
 
 void resetGame() {
 	std::cout << player.z << " " << tunnel.getLength() - 1 << std::endl;
@@ -34,6 +34,7 @@ void resetGame() {
 	rockVel = ROCK_START_VEL;
 	musicSound.setPlayingOffset(sf::Time::Zero);
 	musicSound.play();
+	feetSound.play();
 }
 
 void events() {
@@ -125,14 +126,18 @@ void logic() {
 				}
 			} else if (gem == 4) {
 				player.slowTime = 10;
+				powerSound.play();
 			} else if (gem == 5) {
 				for (int i = 5; i < 9; i++) {
 					for (int j = z1 + 1; j <= z1 + 6; j++) {
+						if (j >= tunnel.getLength()) break;
 						if (tunnel.get(j, i) == 0) tunnel.set(j, i, 1);
 					}
 				}
+				powerSound.play();
 			} else if (gem == 6) {
 				player.feather = 5;
+				powerSound.play();
 			}
 			tunnel.set(z1, x1 + 5, 0);
 		}
@@ -200,7 +205,7 @@ void logic() {
 	player.yVel -= difff * 15;
 
 	if (player.z > tunnel.getLength() - 2) {
-
+		feetSound.pause();
 	} else {
 		player.z += player.zVel * difff * 2;
 	}
@@ -268,17 +273,26 @@ int main(int argc, char ** argv) {
 	feetSound.setRelativeToListener(true);
 	feetSound.setBuffer(sb5);
 	feetSound.setLoop(true);
+	feetSound.setVolume(50);
 	feetSound.play();
 
 	sf::SoundBuffer sb6;
 	sb6.loadFromFile("assets/bump.ogg");
 	bumpSound.setRelativeToListener(true);
 	bumpSound.setBuffer(sb6);
+	bumpSound.setVolume(40);
 
 	sf::SoundBuffer sb7;
 	sb7.loadFromFile("assets/gem.ogg");
 	gemSound.setRelativeToListener(true);
 	gemSound.setBuffer(sb7);
+	gemSound.setVolume(60);
+
+	sf::SoundBuffer sb8;
+	sb8.loadFromFile("assets/Powerup3.wav");
+	powerSound.setRelativeToListener(true);
+	powerSound.setBuffer(sb8);
+	powerSound.setVolume(80);
 
     // Create the SFML window
 	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");

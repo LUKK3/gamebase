@@ -24,6 +24,7 @@ const sf::Vector2f bridgeTexCoords[4] = {sf::Vector2f(128, 192), sf::Vector2f(19
 const sf::Vector2f timeTexCoords[4]   = {sf::Vector2f(256, 0), sf::Vector2f(320, 0), sf::Vector2f(320, 64), sf::Vector2f(256, 64)};
 const sf::Vector2f rubyTexCoords[4]   = {sf::Vector2f(320, 0), sf::Vector2f(384, 0), sf::Vector2f(384, 64), sf::Vector2f(320, 64)};
 const sf::Vector2f hoverTexCoords[4]  = {sf::Vector2f(384, 0), sf::Vector2f(446, 0), sf::Vector2f(446, 64), sf::Vector2f(384, 64)};
+const sf::Vector2f obsTexCoords[4] = {sf::Vector2f(256, 64), sf::Vector2f(320, 64), sf::Vector2f(320, 128), sf::Vector2f(256, 128)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -398,7 +399,7 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, float 
 		} else if (tunnel->getDifficulty() == 2) {
 			texCoords = blueTexCoords;
 		} else if (tunnel->getDifficulty() == 3) {
-			texCoords = darkStoneTexCoords;
+			texCoords = obsTexCoords;
 		} else if (tunnel->getDifficulty() == 4) {
 			texCoords = cumonTexCoords;
 		} else if (tunnel->getDifficulty() == 5) {
