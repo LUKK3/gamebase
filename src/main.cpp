@@ -96,15 +96,17 @@ void logic() {
 	} else {
 		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
 			int rok = tunnel.get(z1, x1);
-			if (rok == 2)
-				player.zVel = 1.5;
-			else if (rok == 3)
-				player.zVel = 3.5f;
-			else if (rok == 4)
-				player.zVel = 0.0f;
-			bumpSound.play();
-			tunnel.set(z1, x1, 0);
-			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
+			if (rok != 5) {
+				if (rok == 2)
+					player.zVel = 1.5;
+				else if (rok == 3)
+					player.zVel = 3.5f;
+				else if (rok == 4)
+					player.zVel = 0.0f;
+				bumpSound.play();
+				tunnel.set(z1, x1, 0);
+				renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
+			}
 		} else if (!player.fallen && player.y > 0.3 && (tunnel.get(z1, x1 + 5) >= 1 && tunnel.get(z2, x1 + 5) >= 1 && tunnel.get(z1, x2 + 5) >= 1 && tunnel.get(z2, x2 + 5) >= 1)) {
 			int gem = tunnel.get(z1, x1 + 5);
 			player.score += gem;
@@ -183,7 +185,7 @@ void logic() {
 		player.z += player.zVel * difff * 2;
 	}
 	player.y += player.yVel * difff;
-	player.x += player.xVel * difff;
+	player.x += player.xVel * difff * 1.5;
 	if (player.x < -1.9) {
 		player.x = -1.9;
 		player.xVel = 0;
