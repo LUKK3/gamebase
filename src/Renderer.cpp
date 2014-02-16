@@ -213,8 +213,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 
 	static float sz1 = std::sqrt(1.5);
 	sf::Sprite sprite;
+
+	int frame = 0 + (int)z % 3;
+	sprite.setTextureRect(sf::IntRect(sf::Vector2i(frame * 64, 0), sf::Vector2i(64, 128)));
 	sprite.setTexture(playerTexture);
-	sprite.setOrigin(playerTexture.getSize().x / 2, 0);
+	sprite.setOrigin(32, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
 	target.draw(sprite, states.transform);
 }
@@ -249,7 +252,6 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	shape.setPointCount(4);
 	//shape.setTexture(&texture);
 	//shape.setTextureRect(sf::IntRect(0, 0, 64, 64));
-
 	float sz = std::sqrt(z1 + 1.5);
 	float sz2 = std::sqrt(z2 + 1.5);
 
