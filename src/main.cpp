@@ -35,6 +35,7 @@ void logic() {
 	int z2 = std::floor(player.z + 0.9);
 	int x1 = std::floor(player.x + 2.1);
 	int x2 = std::floor(player.x + 1.9);
+
 	if (!player.fallen && player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
 		player.fallen = true;
 		fallingSound.play();
@@ -42,6 +43,11 @@ void logic() {
 		player.zVel -= difff * 10;
 		if (player.zVel < 0) player.zVel = 0;
 	} else {
+		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
+			player.zVel = 1.5;
+			tunnel.set(z1, x1, 0);
+		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
 			player.xVel -= difff * 4;
 			if (player.xVel < -1) player.xVel = -1;
@@ -67,17 +73,17 @@ void logic() {
 			player.zVel += difff * 4;
 			if (player.zVel > 7) player.zVel = 7;
 		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			player.zVel -= difff * 4;
-			if (player.zVel < 3) player.zVel = 3;
+			if (!player.zVel < 3)
+				player.zVel -= difff * 4;
 		} else {
 			if (player.zVel > 5) {
-				if (player.zVel < difff * 3) {
+				if (player.zVel < 5 + difff * 3) {
 					player.zVel = 5;
 				} else {
 					player.zVel -= difff * 3;
 				}
 			} else if (player.zVel < 5) {
-				if (player.zVel > -difff * 3) {
+				if (player.zVel > 5 - difff * 3) {
 					player.zVel = 5;
 				} else {
 					player.zVel += difff * 3;

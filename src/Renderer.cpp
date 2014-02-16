@@ -5,6 +5,7 @@
 
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
+const sf::Vector2f rockTexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -123,28 +124,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 		if (z0 < 60) {
 			for (int j = 0; j < 4; j++) {
 				if (t.get(i, j) == 1 && t.get(i + 1, j) != 1) {
-					//drawTile(vertexArray, z0 + 1, z0 + 1, j - 2, j - 1, 2, 3);
-					sf::ConvexShape shape;
-					shape.setPointCount(4);
-
-					float sz = std::sqrt(z0 + 2.5);
-
-					sf::Vertex vert1(sf::Vector2f(((j - 2) * TILE_SIZE) / sz, (2 * TILE_SIZE) / sz),  stoneTexCoords[0]);
-					sf::Vertex vert2(sf::Vector2f(((j - 1) * TILE_SIZE) / sz, (2 * TILE_SIZE) / sz + 0.01),  stoneTexCoords[1]);
-					sf::Vertex vert3(sf::Vector2f(((j - 1) * TILE_SIZE) / sz, (3 * TILE_SIZE) / sz + 0.01), stoneTexCoords[2]);
-					sf::Vertex vert4(sf::Vector2f(((j - 2) * TILE_SIZE) / sz, (3 * TILE_SIZE) / sz), stoneTexCoords[3]);
-					int c = (int)(sz * 20 + 50);
-					if (c < 0) c = 0;
-					if (c > 255) c = 255;
-					vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
-					vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
-					vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
-					vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
-
-					vertexArray.append(vert1);
-					vertexArray.append(vert2);
-					vertexArray.append(vert3);
-					vertexArray.append(vert4);
+					drawTileFlat(vertexArray, z0 + 1, j - 2, j - 1, 2, 3, stoneTexCoords);
 				}
 			}
 		}
@@ -166,6 +146,11 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  0,  1);
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  1,  2);
 
+		if (tunnel->get(i, 0) == 2) drawTileFlat(vertexArray, z0 + 0.5, -2, -1, 1.1, 2.1, rockTexCoords);
+		if (tunnel->get(i, 1) == 2) drawTileFlat(vertexArray, z0 + 0.5, -1,  0, 1.1, 2.1, rockTexCoords);
+		if (tunnel->get(i, 2) == 2) drawTileFlat(vertexArray, z0 + 0.5,  0,  1, 1.1, 2.1, rockTexCoords);
+		if (tunnel->get(i, 3) == 2) drawTileFlat(vertexArray, z0 + 0.5,  1,  2, 1.1, 2.1, rockTexCoords);
+
 		target.draw(vertexArray, states);
 	}
 
@@ -175,6 +160,30 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 	sprite.setOrigin(playerTexture.getSize().x / 2, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
 	target.draw(sprite, states.transform);
+}
+
+void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, int x1, int x2, float y1, float y2, const sf::Vector2f* texCoords) {
+	sf::ConvexShape shape;
+	shape.setPointCount(4);
+
+	float sz = std::sqrt(z + 1.5);
+
+	sf::Vertex vert1(sf::Vector2f((x1 * TILE_SIZE) / sz, (y1 * TILE_SIZE) / sz),  texCoords[0]);
+	sf::Vertex vert2(sf::Vector2f((x2 * TILE_SIZE) / sz, (y1 * TILE_SIZE) / sz + 0.01),  texCoords[1]);
+	sf::Vertex vert3(sf::Vector2f((x2 * TILE_SIZE) / sz, (y2 * TILE_SIZE) / sz + 0.01), texCoords[2]);
+	sf::Vertex vert4(sf::Vector2f((x1 * TILE_SIZE) / sz, (y2 * TILE_SIZE) / sz), texCoords[3]);
+	int c = (int)(sz * 20 + 50);
+	if (c < 0) c = 0;
+	if (c > 255) c = 255;
+	vert1.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert2.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert3.color = sf::Color(255 - c, 255 - c, 255 - c);
+	vert4.color = sf::Color(255 - c, 255 - c, 255 - c);
+
+	vertexArray.append(vert1);
+	vertexArray.append(vert2);
+	vertexArray.append(vert3);
+	vertexArray.append(vert4);
 }
 
 void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1, int x2, float y1, float y2, int x, int z) {
@@ -210,7 +219,7 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 	if (c < 0) c = 0;
 	if (c > 255) c = 255;
 
-	float add = 1.0f - lightRatio; //lightRatio * (2 * c - 255);
+	float add = 1.0f - lightRatio;
 	vert1.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
 	vert2.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
 	vert3.color = sf::Color(255 - add * c, 255 - add * c, 255 - add * c);
