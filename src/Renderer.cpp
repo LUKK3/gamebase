@@ -208,7 +208,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 
 	for (int i = (int)z + 100; i >= (int)z; i--) {
 		float z0 = i - z;
-		if (i == tunnel->getLength()) {
+		if (i == tunnel->getLength() && tunnel->hasBrickWall()) {
 			for (int jj = -2; jj < 2; jj++) {
 				for (int kk = -2; kk < 2; kk++) {
 					drawTileFlat(vertexArray, z0, jj, jj + 1, kk, kk + 1, brickTexCoords);

@@ -16,6 +16,9 @@ class Tunnel {
 
 		int getLength();
 
+		bool hasBrickWall();
+		void breakWall();
+
 		void reset();
 
 	private:
@@ -23,6 +26,7 @@ class Tunnel {
 
 		std::vector<int*> tunnel;
 		int length;
+		bool brickWall;
 };
 
 #endif // TUNNEL_H

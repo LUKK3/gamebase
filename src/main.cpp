@@ -42,6 +42,16 @@ void logic() {
 	int x1 = std::floor(player.x + 2.1);
 	int x2 = std::floor(player.x + 1.9);
 
+	if (rockZ > tunnel.getLength() - 1 && tunnel.hasBrickWall()) {
+		//destroy bricks
+		for (float i = -2; i <= 2; i += 0.1f) {
+			for (float j = -2; j <= 2; j += 0.1f) {
+				renderer.addParticles(1, sf::Color(108, 7, 7), sf::Vector3f(i, j, tunnel.getLength()));
+			}
+		}
+		tunnel.breakWall();
+	}
+
 	if (player.fallen) {
 		feetSound.stop();
 		player.zVel -= difff * 10;
