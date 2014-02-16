@@ -13,6 +13,9 @@ const sf::Vector2f rock2TexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192,
 const sf::Vector2f rock3TexCoords[4]  = {sf::Vector2f(192, 64), sf::Vector2f(256, 64), sf::Vector2f(256, 128), sf::Vector2f(192, 128)};
 const sf::Vector2f webTexCoords[4]   = {sf::Vector2f(64, 64), sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 64)};
 const sf::Vector2f brickTexCoords[4]  = {sf::Vector2f(128, 64), sf::Vector2f(192, 64), sf::Vector2f(192, 128), sf::Vector2f(128, 128)};
+const sf::Vector2f cgemTexCoords[4]   = {sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 192), sf::Vector2f(0, 192)};
+const sf::Vector2f rgemTexCoords[4]   = {sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 192), sf::Vector2f(64, 192)};
+const sf::Vector2f ggemTexCoords[4]   = {sf::Vector2f(128, 128), sf::Vector2f(192, 128), sf::Vector2f(192, 192), sf::Vector2f(128, 192)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -84,6 +87,13 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 	text2.setCharacterSize(20);
 	text2.setPosition(endX + 24, startY + 5);
 	target.draw(text2);
+
+	std::stringstream ss0;
+	ss0 << "Score: " << player.score;
+	sf::Text text0(ss0.str(), font);
+	text0.setCharacterSize(30);
+	text0.setPosition(startX - 24, startY + 30);
+	target.draw(text0);
 
 	if (player.fallen) {
 		// YOU DIED
@@ -238,6 +248,12 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 			if (tunnel->get(i, j) == 3) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock1TexCoords);
 			else if (tunnel->get(i, j) == 2) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock2TexCoords);
 			else if (tunnel->get(i, j) == 4) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, 1., 2., rock3TexCoords);
+		}
+
+		for (int j = 0; j < 4; j++) {
+			if (tunnel->get(i, j + 5) == 1) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, rgemTexCoords);
+			else if (tunnel->get(i, j + 5) == 2) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, ggemTexCoords);
+			else if (tunnel->get(i, j + 5) == 3) drawTileFlat(vertexArray, z0 + 0.5, j - 2, j - 1, -.5, .5, cgemTexCoords);
 		}
 
 		if (tunnel->getWeb(i, 0)) {
