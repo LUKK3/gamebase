@@ -56,9 +56,11 @@ void Renderer::update(float diff) {
 bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ) {
 	float boulderPercent = rockZ / tunnel.getLength();
 	boulderPercent = boulderPercent > 1.0f ? 1.0f : boulderPercent;
+	boulderPercent = boulderPercent < 0.0f ? 0.0f : boulderPercent;
 
 	float playerPercent = player.z / tunnel.getLength();
 	playerPercent = playerPercent > 1.0f ? 1.0f : playerPercent;
+	playerPercent = playerPercent < 0.0f ? 0.0f : playerPercent;
 
 	float startX = (WINDOW_WIDTH - gauge.getSize().x) / 2;
 	float endX = startX + gauge.getSize().x;
@@ -103,14 +105,16 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 
 	if (player.fallen) {
 		// YOU DIED
-		sf::Text diedText("You died!", font);
+		std::string diedString = (player.score >= 5 && player.z > tunnel.getLength() - 2) ? "You... won?" : "You lose!";
+		sf::Text diedText(diedString, font);
 		diedText.setCharacterSize(80);
 		diedText.setColor(sf::Color(255, 0, 0, 255));
 		diedText.setPosition(WINDOW_WIDTH / 2 - diedText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText.getLocalBounds().height / 2 - 100);
 		target.draw(diedText);
 
 		// TRY AGAIN
-		sf::Text diedText2("Try again?", font);
+		diedString = (player.score >= 5 && player.z > tunnel.getLength() - 2) ? "Go to next level?" : "Try again?";
+		sf::Text diedText2(diedString, font);
 		diedText2.setCharacterSize(48);
 		diedText2.setColor(sf::Color(255, 0, 0, 255));
 		diedText2.setPosition(WINDOW_WIDTH / 2 - diedText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - diedText2.getLocalBounds().height / 2 - 20);
@@ -179,15 +183,6 @@ bool Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 		infoText2.setColor(sf::Color(255, 0, 0, alpha * 255));
 		infoText2.setPosition(WINDOW_WIDTH / 2 - infoText2.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - infoText2.getLocalBounds().height / 2 + 30);
 		target.draw(infoText2);
-	}
-
-	// If playerPercent > 1.0f, YOU WIN
-	if (playerPercent == 1.0f) {
-		sf::Text winText("YOU WIN!", font);
-		winText.setCharacterSize(80);
-		winText.setColor(sf::Color(255, 0, 0, 255));
-		winText.setPosition(WINDOW_WIDTH / 2 - winText.getLocalBounds().width / 2, WINDOW_HEIGHT / 2 - winText.getLocalBounds().height / 2);
-		target.draw(winText);
 	}
 	return false;
 }
@@ -328,7 +323,7 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 		}
 	}
 
-	if (p.z > tunnel->getLength() - 50) {
+	if (p.z > tunnel->getLength() - 5) {
 		sf::VertexArray bubbleVA(sf::Quads, 4 * 1);
 		drawTileFlat(bubbleVA, 1, p.x, p.x + 1, -p.y -1, -p.y , bubbleTexCoords);
 		target.draw(bubbleVA, states);

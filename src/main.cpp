@@ -14,6 +14,7 @@ float rockZ = ROCK_START_Z;
 float rockVel = ROCK_START_VEL;
 Tunnel tunnel;
 Renderer renderer;
+bool menu = true;
 
 int difficulty = 0;
 
@@ -23,6 +24,7 @@ sf::Clock mainClock;
 sf::Time prevTime;
 
 sf::Sound boulderSound, fallingSound, jumpingSound, feetSound, musicSound, bumpSound, gemSound;
+sf::Texture titleImg;
 
 void resetGame() {
 	std::cout << player.z << " " << tunnel.getLength() - 1 << std::endl;
@@ -213,8 +215,18 @@ void render() {
 	window.clear();
 
 	renderer.render(window, tunnel, player, rockZ);
-	if (renderer.renderUI(window, tunnel, player, rockZ)) {
-		resetGame();
+	if (!menu) {
+		if (renderer.renderUI(window, tunnel, player, rockZ)) {
+			resetGame();
+		}
+	} else {
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+			menu = false;
+			mainClock.restart();
+		}
+		sf::Sprite title(titleImg);
+        title.setPosition(0, 0);
+        window.draw(title);
 	}
 
 	// Notify the window that we're ready to render
@@ -223,6 +235,8 @@ void render() {
 
 // Program entry point
 int main(int argc, char ** argv) {
+	titleImg.loadFromFile("assets/title.png");
+
 	sf::SoundBuffer sb;
 	sb.loadFromFile("assets/avalanche.ogg");
 	boulderSound.setBuffer(sb);
@@ -265,11 +279,11 @@ int main(int argc, char ** argv) {
 	gemSound.setBuffer(sb7);
 
     // Create the SFML window
-	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Game!");
+	window.create(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "A Bolder Escape");
 
     while (window.isOpen()) {
 		events();
-		logic();
+		if (!menu) logic();
 		render();
     }
 
