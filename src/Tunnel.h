@@ -5,7 +5,7 @@
 
 class Tunnel {
 	public:
-		Tunnel(int length = 100);
+		Tunnel(int length = 300);
 
 		void genTo(int z);
 
