@@ -189,7 +189,7 @@ void logic() {
 		player.z += player.zVel * difff * 2;
 	}
 	player.y += player.yVel * difff;
-	player.x += player.xVel * difff * 1.5;
+	player.x += player.xVel * difff * 2;
 	if (player.x < -1.9) {
 		player.x = -1.9;
 		player.xVel = 0;
@@ -200,7 +200,7 @@ void logic() {
 	}
 
 	rockZ += difff * rockVel;
-	rockVel += difff / 2;
+	rockVel += difff / 3;
 
 	renderer.update(difff);
 
