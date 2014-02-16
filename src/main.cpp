@@ -194,6 +194,7 @@ int main(int argc, char ** argv) {
 	musicSound.setBuffer(sb4);
 	musicSound.setRelativeToListener(true);
 	musicSound.setVolume(30.f);
+	musicSound.setLoop(true);
 	musicSound.play();
 
 	sf::SoundBuffer sb5;

@@ -9,6 +9,7 @@ const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64),
 const sf::Vector2f darkStoneTexCoords[4] = {sf::Vector2f(0, 64), sf::Vector2f(0, 128), sf::Vector2f(64, 128), sf::Vector2f(64, 64)};
 const sf::Vector2f lavaTexCoords[4]  = {sf::Vector2f(64, 0), sf::Vector2f(64, 64), sf::Vector2f(128, 64), sf::Vector2f(128, 0)};
 const sf::Vector2f rockTexCoords[4]  = {sf::Vector2f(128, 0), sf::Vector2f(192, 0), sf::Vector2f(192, 64), sf::Vector2f(128, 64)};
+const sf::Vector2f webTexCoords[4]   = {sf::Vector2f(64, 64), sf::Vector2f(64, 128), sf::Vector2f(128, 128), sf::Vector2f(128, 64)};
 
 Renderer::Renderer() {
 	// Tileset
@@ -231,6 +232,13 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rock
 		if (tunnel->get(i, 2) == 2) drawTileFlat(vertexArray, z0 + 0.5,  0,  1, 1., 2., rockTexCoords);
 		if (tunnel->get(i, 3) == 2) drawTileFlat(vertexArray, z0 + 0.5,  1,  2, 1., 2., rockTexCoords);
 
+		if (tunnel->getWeb(i, 0)) {
+			drawTileFlat(vertexArray, z0 + 1, -1, -2, -2, -1, webTexCoords);
+		}
+		if (tunnel->getWeb(i, 1)) {
+			drawTileFlat(vertexArray, z0 + 1, 1, 2, -2, -1, webTexCoords);
+		}
+
 		target.draw(vertexArray, states);
 	}
 
@@ -324,8 +332,8 @@ void Renderer::drawTile(sf::VertexArray& vertexArray, float z1, float z2, int x1
 
 	const sf::Vector2f* texCoords;
 	if (x != -1 && tunnel->get(z, x) == 1) {
-		y1 += .1f;
-		y2 += .1f;
+		y1 += .2f;
+		y2 += .2f;
 		texCoords = lavaTexCoords;
 
 		if (x == 0 || (x == 1 && tunnel->get(z, 0) == 0)) {
