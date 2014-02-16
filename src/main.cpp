@@ -4,8 +4,11 @@
 #include "Tunnel.h"
 #include "Renderer.h"
 
+#include <cstdlib>
+
 Player player;
 float rockZ = -10;
+float rockVel = 8.f;
 Tunnel tunnel;
 Renderer renderer;
 
@@ -36,16 +39,32 @@ void logic() {
 	int x1 = std::floor(player.x + 2.1);
 	int x2 = std::floor(player.x + 1.9);
 
-	if (!player.fallen && player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
-		player.fallen = true;
-		fallingSound.play();
-	} else if (player.fallen) {
+	if (player.fallen) {
 		player.zVel -= difff * 10;
 		if (player.zVel < 0) player.zVel = 0;
+
+		if (rockZ > player.z) {
+			static float parts = 0;
+			parts += difff * 20;
+			while(parts > 0) {
+				renderer.addParticles(1, sf::Color(100, 50, 10), sf::Vector3f(rand() / (float)RAND_MAX * 2 - 1, 2, rockZ + 2));
+				parts--;
+			}
+		}
+	} else if (rockZ > player.z) {
+		player.fallen = true;
+		fallingSound.play();
+		renderer.addParticles(10, sf::Color(255, 0, 0), sf::Vector3f(player.x, 2, player.z));
+		player.y = -100;
+	} else if (player.y < 0.01 && (tunnel.get(z1, x1) == 1 && tunnel.get(z2, x1) == 1 && tunnel.get(z1, x2) == 1 && tunnel.get(z2, x2) == 1)) {
+		player.fallen = true;
+		fallingSound.play();
+		renderer.addParticles(10, sf::Color(255, 127, 0), sf::Vector3f(player.x, 3, player.z));
 	} else {
 		if (!player.fallen && player.y < 0.3 && (tunnel.get(z1, x1) > 1 && tunnel.get(z2, x1) > 1 && tunnel.get(z1, x2) > 1 && tunnel.get(z2, x2) > 1)) {
 			player.zVel = 1.5;
 			tunnel.set(z1, x1, 0);
+			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
 		}
 
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left) || sf::Keyboard::isKeyPressed(sf::Keyboard::A)) {
@@ -73,7 +92,7 @@ void logic() {
 			player.zVel += difff * 4;
 			if (player.zVel > 7) player.zVel = 7;
 		} else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down) || sf::Keyboard::isKeyPressed(sf::Keyboard::S)) {
-			if (!player.zVel < 3)
+			if (player.zVel < 3)
 				player.zVel -= difff * 4;
 		} else {
 			if (player.zVel > 5) {
@@ -112,14 +131,19 @@ void logic() {
 		player.y = 0;
 		player.yVel = 0;
 	}
+
+	rockZ += difff * rockVel;
+	rockVel += difff;
+
+	renderer.update(difff);
 }
 
 void render() {
 	// Clear the window before we start drawing to it
 	window.clear();
 
-	renderer.render(window, tunnel, player);
-	renderer.renderUI(window, tunnel, player);
+	renderer.render(window, tunnel, player, rockZ);
+	renderer.renderUI(window, tunnel, player, rockZ);
 
 	// Notify the window that we're ready to render
 	window.display();

@@ -1,6 +1,8 @@
 #include "Renderer.h"
 #include <sstream>
 
+#include <cstdlib>
+
 #define TILE_SIZE 100
 
 const sf::Vector2f stoneTexCoords[4] = {sf::Vector2f(0, 0), sf::Vector2f(0, 64), sf::Vector2f(64, 64), sf::Vector2f(64, 0)};
@@ -11,16 +13,30 @@ Renderer::Renderer() {
 	// Tileset
 	tileTexture.loadFromFile("assets/tile.png");
 	playerTexture.loadFromFile("assets/player.png");
+	rockTexture.loadFromFile("assets/boulder.png");
 
 	// UI
 	gauge.loadFromFile("assets/gauge.png");
 	playerInd.loadFromFile("assets/guy_marker.png");
 	boulderInd.loadFromFile("assets/boulder_marker.png");
     font.loadFromFile("assets/goldbox.ttf");
+
+    tim = 0;
 }
 
-void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player) {
-	float boulderPercent = 0.0f;
+void Renderer::addParticles(int num, sf::Color color, sf::Vector3f position) {
+	particlesSet.emplace_back(num, color, position);
+}
+
+void Renderer::update(float diff) {
+	for (auto iter = particlesSet.begin(); iter != particlesSet.end(); ++iter) {
+		iter->update(diff);
+	}
+	tim += diff;
+}
+
+void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player, float rockZ) {
+	float boulderPercent = rockZ / tunnel.getLength();
 	boulderPercent = boulderPercent > 1.0f ? 1.0f : boulderPercent;
 
 	float playerPercent = player.z / tunnel.getLength();
@@ -145,13 +161,19 @@ void Renderer::renderUI(sf::RenderWindow& target, Tunnel& tunnel, Player& player
 	}
 }
 
-void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
+void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p, float rockZ) {
 	float z = p.z;
 
 	sf::RenderStates states;
 	states.texture = &tileTexture;
 	states.transform.translate(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+
+	float quake = 1 / std::max(std::abs(z - rockZ), 1.f);
+	states.transform.translate(rand() / (float)RAND_MAX * quake * 30, rand() / (float)RAND_MAX * quake * 30);
+
 	states.transform.scale(2.5, 2.5);
+
+
 
 	tunnel = &t;
 	player = &p;
@@ -203,10 +225,10 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  0,  1);
 		drawTile(vertexArray, z0, z0 + 1, -2, -2,  1,  2);
 
-		if (tunnel->get(i, 0) == 2) drawTileFlat(vertexArray, z0 + 0.5, -2, -1, 1.1, 2.1, rockTexCoords);
-		if (tunnel->get(i, 1) == 2) drawTileFlat(vertexArray, z0 + 0.5, -1,  0, 1.1, 2.1, rockTexCoords);
-		if (tunnel->get(i, 2) == 2) drawTileFlat(vertexArray, z0 + 0.5,  0,  1, 1.1, 2.1, rockTexCoords);
-		if (tunnel->get(i, 3) == 2) drawTileFlat(vertexArray, z0 + 0.5,  1,  2, 1.1, 2.1, rockTexCoords);
+		if (tunnel->get(i, 0) == 2) drawTileFlat(vertexArray, z0 + 0.5, -2, -1, 1., 2., rockTexCoords);
+		if (tunnel->get(i, 1) == 2) drawTileFlat(vertexArray, z0 + 0.5, -1,  0, 1., 2., rockTexCoords);
+		if (tunnel->get(i, 2) == 2) drawTileFlat(vertexArray, z0 + 0.5,  0,  1, 1., 2., rockTexCoords);
+		if (tunnel->get(i, 3) == 2) drawTileFlat(vertexArray, z0 + 0.5,  1,  2, 1., 2., rockTexCoords);
 
 		target.draw(vertexArray, states);
 	}
@@ -220,6 +242,50 @@ void Renderer::render(sf::RenderTarget& target, Tunnel& t, Player& p) {
 	sprite.setOrigin(32, 0);
 	sprite.setPosition(p.x * TILE_SIZE / std::sqrt(2.5), (0 - p.y) * TILE_SIZE / sz1);
 	target.draw(sprite, states.transform);
+
+	if (rockZ > z - 0.5) {
+
+		int frame = (int)(tim * 30);
+		int x = frame % 10;
+		int y = (frame % 100) / 10;
+
+		sf::Sprite sprite;
+		sprite.setTexture(rockTexture);
+		int siz = rockTexture.getSize().x / 10;
+		sprite.setTextureRect(sf::IntRect(siz * x, siz * y, siz, siz));
+		sprite.setOrigin(rockTexture.getSize().x / 20, rockTexture.getSize().y / 20);
+		float sz = std::sqrt(-z + rockZ + 1.5);
+		float s = 1 / sz * 2.5;
+		sprite.setScale(s, s);
+
+		int c = (int)(sz * 20 + 50);
+		if (c < 0) c = 0;
+		if (c > 255) c = 255;
+		sprite.setColor(sf::Color(255 - c, 255 - c, 255 - c));
+
+		target.draw(sprite, states.transform);
+	}
+
+	for (size_t i = 0; i < particlesSet.size(); i++) {
+		Particles& particles = particlesSet[i];
+		//float sz = std::sqrt(p.z - particles.getZ() + 1.5);
+		float sz = std::sqrt(-z + particles.getZ() + 5);
+		for (int j = 0; j < particles.getNumParticles(); j++) {
+			const Particle& p = particles.getParticle(j);
+			if (p.pos.y > 2) continue;
+			sf::Vector2f pos(p.pos.x * TILE_SIZE / sz, p.pos.y * TILE_SIZE / sz);
+			sf::RectangleShape rect;
+			rect.setPosition(pos);
+			rect.setSize(sf::Vector2f(10 / sz, 10 / sz));
+
+			float c = 1 - sz * 0.1 + 0.2;
+			if (c < 0) c = 0;
+			if (c > 1) c = 1;
+
+			rect.setFillColor(sf::Color(p.color.r * c, p.color.g * c, p.color.b * c));
+			target.draw(rect, states.transform);
+		}
+	}
 }
 
 void Renderer::drawTileFlat(sf::VertexArray& vertexArray, float z, int x1, int x2, float y1, float y2, const sf::Vector2f* texCoords) {

@@ -9,7 +9,7 @@ Particles::Particles(int num, sf::Color color, sf::Vector3f position) {
 		particles[i].pos.x = position.x;
 		particles[i].pos.y = position.y;
 		particles[i].xVel = rand() / (float)RAND_MAX - 0.5f;
-		particles[i].yVel = rand() / (float)RAND_MAX * -10;
+		particles[i].yVel = rand() / (float)RAND_MAX * -2 - 4;
 
 		int r = color.r + rand() % 20 - 10;
 		if (r < 0) r = 0;
@@ -42,6 +42,6 @@ void Particles::update(float diff) {
 	for (int i = 0; i < getNumParticles(); i++) {
 		particles[i].pos.x += particles[i].xVel * diff;
 		particles[i].pos.y += particles[i].yVel * diff;
-		particles[i].yVel -= diff;
+		particles[i].yVel += diff * 10;
 	}
 }
