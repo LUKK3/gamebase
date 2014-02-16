@@ -81,6 +81,9 @@ int* Tunnel::insertRow() {
 			}
 		}
 	}
+	if (rand() % 20 == 0) {
+		arr[rand() % 4 + 5] = rand() % 3 + 1;
+	}
 	return arr;
 }
 

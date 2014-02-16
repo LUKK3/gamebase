@@ -90,7 +90,12 @@ void logic() {
 			bumpSound.play();
 			tunnel.set(z1, x1, 0);
 			renderer.addParticles(10, sf::Color(100, 100, 100), sf::Vector3f(player.x, 2, player.z));
-		} else if (!player.fallen && player.y > 0.5 && (tunnel.get(z1, x1 + 5) > 1 && tunnel.get(z2, x1 + 5) > 1 && tunnel.get(z1, x2 + 5) > 1 && tunnel.get(z2, x2 + 5) > 1)) {
+		} else if (!player.fallen && player.y > 0.3 && (tunnel.get(z1, x1 + 5) >= 1 && tunnel.get(z2, x1 + 5) >= 1 && tunnel.get(z1, x2 + 5) >= 1 && tunnel.get(z2, x2 + 5) >= 1)) {
+			int gem = tunnel.get(z1, x1 + 5);
+			player.score += gem;
+			if (gem == 1) renderer.addParticles(5, sf::Color(200, 0, 0), sf::Vector3f(player.x, .5, player.z + 1));
+			else if (gem == 2) renderer.addParticles(5, sf::Color(0, 255, 0), sf::Vector3f(player.x, .5, player.z + 1));
+			else if (gem == 3) renderer.addParticles(5, sf::Color(0, 255, 255), sf::Vector3f(player.x, .5, player.z + 1));
 			tunnel.set(z1, x1 + 5, 0);
 		}
 
@@ -138,12 +143,22 @@ void logic() {
 				}
 			}
 		}
-		if (!player.fallen && player.y == 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
+		if (!player.fallen && player.y <= 0 && sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			player.yVel = 4;
+			player.y += 0.01;
 			jumpingSound.play();
 			feetSound.pause();
 		}
 	}
+
+	if (!player.fallen && player.y < 0) {
+		player.y = 0;
+		player.yVel = 0;
+		if (feetSound.getStatus() == sf::Sound::Status::Paused) {
+			feetSound.play();
+		}
+	}
+
 	player.yVel -= difff * 15;
 
 	if (player.z > tunnel.getLength() - 2) {
@@ -161,13 +176,6 @@ void logic() {
 		player.x = 1.9;
 		player.xVel = 0;
 	}
-	if (!player.fallen && player.y < 0) {
-		player.y = 0;
-		player.yVel = 0;
-		if (feetSound.getStatus() == sf::Sound::Status::Paused) {
-			feetSound.play();
-		}
-	}
 
 	rockZ += difff * rockVel;
 	rockVel += difff / 2;
@@ -184,7 +192,7 @@ void render() {
 
 	renderer.render(window, tunnel, player, rockZ);
 	if (renderer.renderUI(window, tunnel, player, rockZ)) {
-		if (player.z > tunnel.getLength() - 1) difficulty++;
+		if (player.z > tunnel.getLength() - 1 && player.score >= 5) difficulty++;
 		tunnel.reset(difficulty);
 		player.reset();
 		renderer.reset();
